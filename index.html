@@ -1,0 +1,1671 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">
+  <head>
+    <meta charset="utf-8" />
+    <title>Two-body Newtonian Gravitation</title>
+    <link rel="stylesheet"  type="text/css" href="_ejs_library/css/ejss.css" />
+    <script src="_ejs_library/scripts/common_script.js"></script>
+    <script src="_ejs_library/scripts/textresizedetector.js"></script>
+    <script src="_ejs_library/ejsS.v1.min.js"></script>
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+/* _inputParameters: an object with different values for the model parameters */
+function TwoBodyNewtonianGravitation(_topFrame,_libraryPath,_codebasePath, _inputParameters) {
+  var _model = EJSS_CORE.createAnimationLMS();
+  var _view;
+  var _isPlaying = false;
+  var _isPaused = true;
+  var _isMobile = (navigator===undefined) ? false : navigator.userAgent.match(/iPhone|iPad|iPod|Android|BlackBerry|Opera Mini|IEMobile/i);
+
+var _stringProperties = {};
+  var _tools = {
+    showInputDialog : EJSS_INTERFACE.BoxPanel.showInputDialog,
+    showOkDialog : EJSS_INTERFACE.BoxPanel.showOkDialog,
+    showOkCancelDialog : EJSS_INTERFACE.BoxPanel.showOkCancelDialog,
+    downloadText: EJSS_TOOLS.File.downloadText,
+    uploadText: function(action) { EJSS_TOOLS.File.uploadText(_model,action); } 
+  };
+
+  function _play()  { _isPaused = false; _isPlaying = true;  _model.play();  }
+  function _pause() { _isPaused = true;  _isPlaying = false; _model.pause(); }
+  function _step()  { _pause();  _model.step(); }
+  function _reset() { _model.reset();  _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); }
+  _model._play  = _play;
+  _model._pause = _pause;
+  _model._step  = _step;
+  _model._reset = _reset;
+  function _update() { _model.update(); }
+  function _initialize() { _model.initialize(); }
+  function _setFPS(_fps) { _model.setFPS(_fps); }
+  function _setDelay(_delay) { _model.setDelay(_delay); }
+  function _setStepsPerDisplay(_spd) { _model.setStepsPerDisplay(_spd); }
+  function _setUpdateView(_updateView) { _model.setUpdateView(_updateView); }
+  function _setAutoplay(_auto) { _model.setAutoplay(_auto); }
+  function _println(_message) { console.log(_message); }
+
+  function _breakAfterThisPage() { _model.setShouldBreak(true); }
+
+  function _resetSolvers() { if (_model.resetSolvers) _model.resetSolvers(); }
+
+  function _saveText(name,type,content) { if (_model.saveText) _model.saveText(name,type,content); }
+
+  function _saveState(name) { if (_model.saveState) _model.saveState(name); }
+
+  function _saveImage(name,panelname) { if (_model.saveImage) _model.saveImage(name,panelname); }
+
+  function _readState(url,type) { if (_model.readState) _model.readState(url,type); }
+
+  function _readText(url,type,varname) { if (_model.readText) _model.readText(url,type,varname); }
+
+  function _getStringProperty(propertyName) {
+    var _value = _stringProperties[propertyName];
+    if (_value===undefined) return propertyName;
+    else return _value;
+  }
+  var __pagesEnabled = [];
+  function _setPageEnabled(pageName,enabled) { __pagesEnabled[pageName] = enabled; }
+
+  var t; // EjsS Model.Variables.State Variables.t
+  var dt; // EjsS Model.Variables.State Variables.dt
+  var m; // EjsS Model.Variables.State Variables.m
+  var M; // EjsS Model.Variables.State Variables.M
+  var x; // EjsS Model.Variables.State Variables.x
+  var X; // EjsS Model.Variables.State Variables.X
+  var y; // EjsS Model.Variables.State Variables.y
+  var Y; // EjsS Model.Variables.State Variables.Y
+  var vx; // EjsS Model.Variables.State Variables.vx
+  var vX; // EjsS Model.Variables.State Variables.vX
+  var vy; // EjsS Model.Variables.State Variables.vy
+  var vY; // EjsS Model.Variables.State Variables.vY
+
+  var G; // EjsS Model.Variables.Constants.G
+  var scalev; // EjsS Model.Variables.Constants.scalev
+  var scalem; // EjsS Model.Variables.Constants.scalem
+
+  var x0; // EjsS Model.Variables.Constrained Variables.x0
+  var y0; // EjsS Model.Variables.Constrained Variables.y0
+  var KEsmall; // EjsS Model.Variables.Constrained Variables.KEsmall
+  var KElarge; // EjsS Model.Variables.Constrained Variables.KElarge
+  var GPE; // EjsS Model.Variables.Constrained Variables.GPE
+  var totalE; // EjsS Model.Variables.Constrained Variables.totalE
+  var vsmall; // EjsS Model.Variables.Constrained Variables.vsmall
+  var vlarge; // EjsS Model.Variables.Constrained Variables.vlarge
+  var vr; // EjsS Model.Variables.Constrained Variables.vr
+  var vR; // EjsS Model.Variables.Constrained Variables.vR
+  var vtheta; // EjsS Model.Variables.Constrained Variables.vtheta
+  var vTheta; // EjsS Model.Variables.Constrained Variables.vTheta
+  var Lsmall; // EjsS Model.Variables.Constrained Variables.Lsmall
+  var radialPot; // EjsS Model.Variables.Constrained Variables.radialPot
+  var dragx; // EjsS Model.Variables.Constrained Variables.dragx
+  var dragy; // EjsS Model.Variables.Constrained Variables.dragy
+  var xrel; // EjsS Model.Variables.Constrained Variables.xrel
+  var yrel; // EjsS Model.Variables.Constrained Variables.yrel
+  var vrelx; // EjsS Model.Variables.Constrained Variables.vrelx
+  var vrely; // EjsS Model.Variables.Constrained Variables.vrely
+  var L; // EjsS Model.Variables.Constrained Variables.L
+  var eps; // EjsS Model.Variables.Constrained Variables.eps
+  var ecc; // EjsS Model.Variables.Constrained Variables.ecc
+
+  var boolTE; // EjsS Model.Variables.Control Variables.boolTE
+  var boolRad; // EjsS Model.Variables.Control Variables.boolRad
+  var boolCircular; // EjsS Model.Variables.Control Variables.boolCircular
+  var boolCartesian; // EjsS Model.Variables.Control Variables.boolCartesian
+  var topHeight; // EjsS Model.Variables.Control Variables.topHeight
+  var middleHeight; // EjsS Model.Variables.Control Variables.middleHeight
+  var bottomHeight; // EjsS Model.Variables.Control Variables.bottomHeight
+  var bottomMostHeight; // EjsS Model.Variables.Control Variables.bottomMostHeight
+
+  var minRadius; // EjsS Model.Variables.Plotting for energy-position graphs.minRadius
+  var maxRadius; // EjsS Model.Variables.Plotting for energy-position graphs.maxRadius
+  var numPoints; // EjsS Model.Variables.Plotting for energy-position graphs.numPoints
+  var Emax; // EjsS Model.Variables.Plotting for energy-position graphs.Emax
+  var Emin; // EjsS Model.Variables.Plotting for energy-position graphs.Emin
+  var EmaxStatic; // EjsS Model.Variables.Plotting for energy-position graphs.EmaxStatic
+  var EminStatic; // EjsS Model.Variables.Plotting for energy-position graphs.EminStatic
+
+  var _privateOdesList;
+  var _ODEi_evolution1;
+  var userEvents1=[];
+
+  _model.getOdes = function() { return [_ODEi_evolution1]; };
+
+  _model.removeEvents = function(){
+    userEvents1=[];
+  };
+
+  function _serialize() { return _model.serialize(); }
+
+  _model._userSerialize = function() {
+    return {
+      t : t,
+      dt : dt,
+      m : m,
+      M : M,
+      x : x,
+      X : X,
+      y : y,
+      Y : Y,
+      vx : vx,
+      vX : vX,
+      vy : vy,
+      vY : vY,
+      G : G,
+      scalev : scalev,
+      scalem : scalem,
+      x0 : x0,
+      y0 : y0,
+      KEsmall : KEsmall,
+      KElarge : KElarge,
+      GPE : GPE,
+      totalE : totalE,
+      vsmall : vsmall,
+      vlarge : vlarge,
+      vr : vr,
+      vR : vR,
+      vtheta : vtheta,
+      vTheta : vTheta,
+      Lsmall : Lsmall,
+      radialPot : radialPot,
+      dragx : dragx,
+      dragy : dragy,
+      xrel : xrel,
+      yrel : yrel,
+      vrelx : vrelx,
+      vrely : vrely,
+      L : L,
+      eps : eps,
+      ecc : ecc,
+      boolTE : boolTE,
+      boolRad : boolRad,
+      boolCircular : boolCircular,
+      boolCartesian : boolCartesian,
+      topHeight : topHeight,
+      middleHeight : middleHeight,
+      bottomHeight : bottomHeight,
+      bottomMostHeight : bottomMostHeight,
+      minRadius : minRadius,
+      maxRadius : maxRadius,
+      numPoints : numPoints,
+      Emax : Emax,
+      Emin : Emin,
+      EmaxStatic : EmaxStatic,
+      EminStatic : EminStatic
+    };
+  };
+
+  function _serializePublic() { return _model.serializePublic(); }
+
+  _model._userSerializePublic = function() {
+    return {
+      t : t,
+      dt : dt,
+      m : m,
+      M : M,
+      x : x,
+      X : X,
+      y : y,
+      Y : Y,
+      vx : vx,
+      vX : vX,
+      vy : vy,
+      vY : vY,
+      G : G,
+      scalev : scalev,
+      scalem : scalem,
+      x0 : x0,
+      y0 : y0,
+      KEsmall : KEsmall,
+      KElarge : KElarge,
+      GPE : GPE,
+      totalE : totalE,
+      vsmall : vsmall,
+      vlarge : vlarge,
+      vr : vr,
+      vR : vR,
+      vtheta : vtheta,
+      vTheta : vTheta,
+      Lsmall : Lsmall,
+      radialPot : radialPot,
+      dragx : dragx,
+      dragy : dragy,
+      xrel : xrel,
+      yrel : yrel,
+      vrelx : vrelx,
+      vrely : vrely,
+      L : L,
+      eps : eps,
+      ecc : ecc,
+      boolTE : boolTE,
+      boolRad : boolRad,
+      boolCircular : boolCircular,
+      boolCartesian : boolCartesian,
+      topHeight : topHeight,
+      middleHeight : middleHeight,
+      bottomHeight : bottomHeight,
+      bottomMostHeight : bottomMostHeight,
+      minRadius : minRadius,
+      maxRadius : maxRadius,
+      numPoints : numPoints,
+      Emax : Emax,
+      Emin : Emin,
+      EmaxStatic : EmaxStatic,
+      EminStatic : EminStatic
+    };
+  };
+
+  _model._readParameters = function(json) {
+    if(typeof json.t != "undefined") t = json.t;
+    if(typeof json.dt != "undefined") dt = json.dt;
+    if(typeof json.m != "undefined") m = json.m;
+    if(typeof json.M != "undefined") M = json.M;
+    if(typeof json.x != "undefined") x = json.x;
+    if(typeof json.X != "undefined") X = json.X;
+    if(typeof json.y != "undefined") y = json.y;
+    if(typeof json.Y != "undefined") Y = json.Y;
+    if(typeof json.vx != "undefined") vx = json.vx;
+    if(typeof json.vX != "undefined") vX = json.vX;
+    if(typeof json.vy != "undefined") vy = json.vy;
+    if(typeof json.vY != "undefined") vY = json.vY;
+    if(typeof json.G != "undefined") G = json.G;
+    if(typeof json.scalev != "undefined") scalev = json.scalev;
+    if(typeof json.scalem != "undefined") scalem = json.scalem;
+    if(typeof json.x0 != "undefined") x0 = json.x0;
+    if(typeof json.y0 != "undefined") y0 = json.y0;
+    if(typeof json.KEsmall != "undefined") KEsmall = json.KEsmall;
+    if(typeof json.KElarge != "undefined") KElarge = json.KElarge;
+    if(typeof json.GPE != "undefined") GPE = json.GPE;
+    if(typeof json.totalE != "undefined") totalE = json.totalE;
+    if(typeof json.vsmall != "undefined") vsmall = json.vsmall;
+    if(typeof json.vlarge != "undefined") vlarge = json.vlarge;
+    if(typeof json.vr != "undefined") vr = json.vr;
+    if(typeof json.vR != "undefined") vR = json.vR;
+    if(typeof json.vtheta != "undefined") vtheta = json.vtheta;
+    if(typeof json.vTheta != "undefined") vTheta = json.vTheta;
+    if(typeof json.Lsmall != "undefined") Lsmall = json.Lsmall;
+    if(typeof json.radialPot != "undefined") radialPot = json.radialPot;
+    if(typeof json.dragx != "undefined") dragx = json.dragx;
+    if(typeof json.dragy != "undefined") dragy = json.dragy;
+    if(typeof json.xrel != "undefined") xrel = json.xrel;
+    if(typeof json.yrel != "undefined") yrel = json.yrel;
+    if(typeof json.vrelx != "undefined") vrelx = json.vrelx;
+    if(typeof json.vrely != "undefined") vrely = json.vrely;
+    if(typeof json.L != "undefined") L = json.L;
+    if(typeof json.eps != "undefined") eps = json.eps;
+    if(typeof json.ecc != "undefined") ecc = json.ecc;
+    if(typeof json.boolTE != "undefined") boolTE = json.boolTE;
+    if(typeof json.boolRad != "undefined") boolRad = json.boolRad;
+    if(typeof json.boolCircular != "undefined") boolCircular = json.boolCircular;
+    if(typeof json.boolCartesian != "undefined") boolCartesian = json.boolCartesian;
+    if(typeof json.topHeight != "undefined") topHeight = json.topHeight;
+    if(typeof json.middleHeight != "undefined") middleHeight = json.middleHeight;
+    if(typeof json.bottomHeight != "undefined") bottomHeight = json.bottomHeight;
+    if(typeof json.bottomMostHeight != "undefined") bottomMostHeight = json.bottomMostHeight;
+    if(typeof json.minRadius != "undefined") minRadius = json.minRadius;
+    if(typeof json.maxRadius != "undefined") maxRadius = json.maxRadius;
+    if(typeof json.numPoints != "undefined") numPoints = json.numPoints;
+    if(typeof json.Emax != "undefined") Emax = json.Emax;
+    if(typeof json.Emin != "undefined") Emin = json.Emin;
+    if(typeof json.EmaxStatic != "undefined") EmaxStatic = json.EmaxStatic;
+    if(typeof json.EminStatic != "undefined") EminStatic = json.EminStatic;
+  };
+
+  _model._readParametersPublic = function(json) {
+    if(typeof json.t != "undefined") t = json.t;
+    if(typeof json.dt != "undefined") dt = json.dt;
+    if(typeof json.m != "undefined") m = json.m;
+    if(typeof json.M != "undefined") M = json.M;
+    if(typeof json.x != "undefined") x = json.x;
+    if(typeof json.X != "undefined") X = json.X;
+    if(typeof json.y != "undefined") y = json.y;
+    if(typeof json.Y != "undefined") Y = json.Y;
+    if(typeof json.vx != "undefined") vx = json.vx;
+    if(typeof json.vX != "undefined") vX = json.vX;
+    if(typeof json.vy != "undefined") vy = json.vy;
+    if(typeof json.vY != "undefined") vY = json.vY;
+    if(typeof json.G != "undefined") G = json.G;
+    if(typeof json.scalev != "undefined") scalev = json.scalev;
+    if(typeof json.scalem != "undefined") scalem = json.scalem;
+    if(typeof json.x0 != "undefined") x0 = json.x0;
+    if(typeof json.y0 != "undefined") y0 = json.y0;
+    if(typeof json.KEsmall != "undefined") KEsmall = json.KEsmall;
+    if(typeof json.KElarge != "undefined") KElarge = json.KElarge;
+    if(typeof json.GPE != "undefined") GPE = json.GPE;
+    if(typeof json.totalE != "undefined") totalE = json.totalE;
+    if(typeof json.vsmall != "undefined") vsmall = json.vsmall;
+    if(typeof json.vlarge != "undefined") vlarge = json.vlarge;
+    if(typeof json.vr != "undefined") vr = json.vr;
+    if(typeof json.vR != "undefined") vR = json.vR;
+    if(typeof json.vtheta != "undefined") vtheta = json.vtheta;
+    if(typeof json.vTheta != "undefined") vTheta = json.vTheta;
+    if(typeof json.Lsmall != "undefined") Lsmall = json.Lsmall;
+    if(typeof json.radialPot != "undefined") radialPot = json.radialPot;
+    if(typeof json.dragx != "undefined") dragx = json.dragx;
+    if(typeof json.dragy != "undefined") dragy = json.dragy;
+    if(typeof json.xrel != "undefined") xrel = json.xrel;
+    if(typeof json.yrel != "undefined") yrel = json.yrel;
+    if(typeof json.vrelx != "undefined") vrelx = json.vrelx;
+    if(typeof json.vrely != "undefined") vrely = json.vrely;
+    if(typeof json.L != "undefined") L = json.L;
+    if(typeof json.eps != "undefined") eps = json.eps;
+    if(typeof json.ecc != "undefined") ecc = json.ecc;
+    if(typeof json.boolTE != "undefined") boolTE = json.boolTE;
+    if(typeof json.boolRad != "undefined") boolRad = json.boolRad;
+    if(typeof json.boolCircular != "undefined") boolCircular = json.boolCircular;
+    if(typeof json.boolCartesian != "undefined") boolCartesian = json.boolCartesian;
+    if(typeof json.topHeight != "undefined") topHeight = json.topHeight;
+    if(typeof json.middleHeight != "undefined") middleHeight = json.middleHeight;
+    if(typeof json.bottomHeight != "undefined") bottomHeight = json.bottomHeight;
+    if(typeof json.bottomMostHeight != "undefined") bottomMostHeight = json.bottomMostHeight;
+    if(typeof json.minRadius != "undefined") minRadius = json.minRadius;
+    if(typeof json.maxRadius != "undefined") maxRadius = json.maxRadius;
+    if(typeof json.numPoints != "undefined") numPoints = json.numPoints;
+    if(typeof json.Emax != "undefined") Emax = json.Emax;
+    if(typeof json.Emin != "undefined") Emin = json.Emin;
+    if(typeof json.EmaxStatic != "undefined") EmaxStatic = json.EmaxStatic;
+    if(typeof json.EminStatic != "undefined") EminStatic = json.EminStatic;
+  };
+
+  function _unserializePublic(json) { return _model.unserializePublic(json); }
+
+  _model._userUnserializePublic = function(json) {
+    _model._readParametersPublic(json);
+   _resetSolvers();
+   _model.update();
+  };
+
+  function _unserialize(json) { return _model.unserialize(json); }
+
+  _model._userUnserialize = function(json) {
+    _model._readParameters(json);
+   _resetSolvers();
+   _model.update();
+  };
+
+  _model.addToReset(function() {
+    __pagesEnabled["Init Page"] = true;
+    __pagesEnabled["Newtonian gravity"] = true;
+    __pagesEnabled["FixRel Page"] = true;
+  });
+
+  _model.addToReset(function() {
+    t = 0; // EjsS Model.Variables.State Variables.t
+    dt = 0.01; // EjsS Model.Variables.State Variables.dt
+    m = 1; // EjsS Model.Variables.State Variables.m
+    M = 10; // EjsS Model.Variables.State Variables.M
+    x = 1; // EjsS Model.Variables.State Variables.x
+    X = 0; // EjsS Model.Variables.State Variables.X
+    y = 0; // EjsS Model.Variables.State Variables.y
+    Y = 0; // EjsS Model.Variables.State Variables.Y
+    vx = 0; // EjsS Model.Variables.State Variables.vx
+    vX = 0; // EjsS Model.Variables.State Variables.vX
+    vy = 1; // EjsS Model.Variables.State Variables.vy
+    vY = 0; // EjsS Model.Variables.State Variables.vY
+  });
+
+  _model.addToReset(function() {
+    G = 1; // EjsS Model.Variables.Constants.G
+    scalev = 0.2; // EjsS Model.Variables.Constants.scalev
+    scalem = 0.15; // EjsS Model.Variables.Constants.scalem
+  });
+
+  _model.addToReset(function() {
+    x0 = 0; // EjsS Model.Variables.Constrained Variables.x0
+    y0 = 0; // EjsS Model.Variables.Constrained Variables.y0
+    KEsmall = 0; // EjsS Model.Variables.Constrained Variables.KEsmall
+    KElarge = 0; // EjsS Model.Variables.Constrained Variables.KElarge
+    GPE = 0; // EjsS Model.Variables.Constrained Variables.GPE
+    totalE = 0; // EjsS Model.Variables.Constrained Variables.totalE
+    vsmall = 0; // EjsS Model.Variables.Constrained Variables.vsmall
+    vlarge = 0; // EjsS Model.Variables.Constrained Variables.vlarge
+    vr = 0; // EjsS Model.Variables.Constrained Variables.vr
+    vR = 0; // EjsS Model.Variables.Constrained Variables.vR
+    vtheta = 0; // EjsS Model.Variables.Constrained Variables.vtheta
+    vTheta = 0; // EjsS Model.Variables.Constrained Variables.vTheta
+    Lsmall = 0; // EjsS Model.Variables.Constrained Variables.Lsmall
+    radialPot = 0; // EjsS Model.Variables.Constrained Variables.radialPot
+    dragx = 1; // EjsS Model.Variables.Constrained Variables.dragx
+    dragy = 2; // EjsS Model.Variables.Constrained Variables.dragy
+    xrel = 0; // EjsS Model.Variables.Constrained Variables.xrel
+    yrel = 0; // EjsS Model.Variables.Constrained Variables.yrel
+    vrelx = 0; // EjsS Model.Variables.Constrained Variables.vrelx
+    vrely = 0; // EjsS Model.Variables.Constrained Variables.vrely
+    L = 0; // EjsS Model.Variables.Constrained Variables.L
+    eps = 0; // EjsS Model.Variables.Constrained Variables.eps
+    ecc = 0; // EjsS Model.Variables.Constrained Variables.ecc
+  });
+
+  _model.addToReset(function() {
+    boolTE = true; // EjsS Model.Variables.Control Variables.boolTE
+    boolRad = false; // EjsS Model.Variables.Control Variables.boolRad
+    boolCircular = true; // EjsS Model.Variables.Control Variables.boolCircular
+    boolCartesian = true; // EjsS Model.Variables.Control Variables.boolCartesian
+    topHeight = 350; // EjsS Model.Variables.Control Variables.topHeight
+    middleHeight = 0; // EjsS Model.Variables.Control Variables.middleHeight
+    bottomHeight = 300; // EjsS Model.Variables.Control Variables.bottomHeight
+    bottomMostHeight = 300; // EjsS Model.Variables.Control Variables.bottomMostHeight
+  });
+
+  _model.addToReset(function() {
+    minRadius = 0; // EjsS Model.Variables.Plotting for energy-position graphs.minRadius
+    maxRadius = 4; // EjsS Model.Variables.Plotting for energy-position graphs.maxRadius
+    numPoints = 1000; // EjsS Model.Variables.Plotting for energy-position graphs.numPoints
+    Emax = 0; // EjsS Model.Variables.Plotting for energy-position graphs.Emax
+    Emin = 0; // EjsS Model.Variables.Plotting for energy-position graphs.Emin
+    EmaxStatic = 0; // EjsS Model.Variables.Plotting for energy-position graphs.EmaxStatic
+    EminStatic = 0; // EjsS Model.Variables.Plotting for energy-position graphs.EminStatic
+  });
+
+  if (_inputParameters) {
+    _inputParameters = _model.parseInputParameters(_inputParameters);
+    if (_inputParameters) _model.addToReset(function() { _model._readParameters(_inputParameters); });
+  }
+
+  _model.addToReset(function() {
+    _privateOdesList=[];
+    _ODEi_evolution1 = _ODE_evolution1();
+    _privateOdesList.push(_ODEi_evolution1);
+  });
+
+  _model.addToReset(function() {
+    _model.setAutoplay(false);
+    _model.setPauseOnPageExit(true);
+    _model.setFPS(24);
+    _model.setStepsPerDisplay(1);
+  });
+
+  // to provide functions, used in initialisation, evolution, fixed relations  // > CustomCode.Lib Page:1
+  // also useful for and plotting  // > CustomCode.Lib Page:2
+  function r (x1,x2,y1,y2) {  // > CustomCode.Lib Page:3
+    // distance between two points  // > CustomCode.Lib Page:4
+    return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));  // > CustomCode.Lib Page:5
+  }  // > CustomCode.Lib Page:6
+  function theta (x,y) {  // > CustomCode.Lib Page:7
+    //atan2(y,x) = angle from +ve x-axis to point (x,y)  // > CustomCode.Lib Page:8
+    return Math.atan2(y,x);  // > CustomCode.Lib Page:9
+  }  // > CustomCode.Lib Page:10
+  function F (m1,m2,R) {  // > CustomCode.Lib Page:11
+    // magnitude of Newtonian gravitational force  // > CustomCode.Lib Page:12
+    return G*m1*m2/(R*R);  // > CustomCode.Lib Page:13
+  }  // > CustomCode.Lib Page:14
+  function U (m1,m2,R) {  // > CustomCode.Lib Page:15
+    // Newtonian gravitational potential energy  // > CustomCode.Lib Page:16
+    return -G*m1*m2/R;  // > CustomCode.Lib Page:17
+  }  // > CustomCode.Lib Page:18
+  function KE (m,vx,vy) {  // > CustomCode.Lib Page:19
+    // provide orthogonal components of velocity  // > CustomCode.Lib Page:20
+    return 0.5*m*(vx*vx+vy*vy);  // > CustomCode.Lib Page:21
+  }  // > CustomCode.Lib Page:22
+  function reducedMass (m1,m2) {  // > CustomCode.Lib Page:23
+    return m1*m2/(m1+m2);  // > CustomCode.Lib Page:24
+  }  // > CustomCode.Lib Page:25
+  function h (xrel,yrel,vrelx,vrely) {  // > CustomCode.Lib Page:26
+    // specific relative angular momentum (r cross v)  // > CustomCode.Lib Page:27
+    return (xrel*vrely) - (yrel*vrelx);  // > CustomCode.Lib Page:28
+  }  // > CustomCode.Lib Page:29
+  function angularMomentum (m,M,h) {  // > CustomCode.Lib Page:30
+    // total angular momentum of system  // > CustomCode.Lib Page:31
+    return reducedMass(m,M)*h;  // > CustomCode.Lib Page:32
+  }  // > CustomCode.Lib Page:33
+  function radialPotential (m,M,r,L) {  // > CustomCode.Lib Page:34
+    // effective radial potential (exact)  // > CustomCode.Lib Page:35
+    // r is the distance between the masses!  // > CustomCode.Lib Page:36
+    // L is the angular momentum of the system, not just the smaller mass  // > CustomCode.Lib Page:37
+    return U(m,M,r) + L*L/(2*reducedMass(m,M)*r*r);  // > CustomCode.Lib Page:38
+  }  // > CustomCode.Lib Page:39
+  function epsilon (G,m,M,r,vrelx,vrely) {  // > CustomCode.Lib Page:40
+    // specific orbital energy  // > CustomCode.Lib Page:41
+    return 0.5*(vrelx*vrelx+vrely*vrely) - (G*(M+m))/r;  // > CustomCode.Lib Page:42
+  }  // > CustomCode.Lib Page:43
+  function eccentricity (G,m,M,h,epsilon) {  // > CustomCode.Lib Page:44
+    // specific orbital energy  // > CustomCode.Lib Page:45
+    return Math.sqrt(1+(2*epsilon*h*h/(G*G*(M+m)*(M+m))));  // > CustomCode.Lib Page:46
+  }  // > CustomCode.Lib Page:47
+  /*  // > CustomCode.Lib Page:48
+  function calcRadialPot (r,L) {  // > CustomCode.Lib Page:49
+    // effective radial potential (dubious?)  // > CustomCode.Lib Page:50
+    // r is the radial coordinate for the smaller mass  // > CustomCode.Lib Page:51
+    return U(m,M,r)/(1+m/M) + L*L/(2*m*r*r)*(1+m/M);  // > CustomCode.Lib Page:52
+  }  // > CustomCode.Lib Page:53
+  */  // > CustomCode.Lib Page:54
+
+  _model.addToInitialization(function() {
+    if (!__pagesEnabled["Init Page"]) return;
+    // should always get to this page before simulation is run!  // > Initialization.Init Page:1
+    // e.g. get to this page if the mass changed with slider  // > Initialization.Init Page:2
+    // e.g. get to this page if the initial velocity changed with field input  // > Initialization.Init Page:3
+    //  or with dragged arrow, or with button click for circular orbit  // > Initialization.Init Page:4
+    // interactivity: enable dragging-resize handle for initial velocity of smaller mass  // > Initialization.Init Page:5
+    //==================================  // > Initialization.Init Page:6
+    dragx = x + vx*scalev;  // > Initialization.Init Page:7
+    dragy = y + vy*scalev;  // > Initialization.Init Page:8
+    // note that (vx,vy) will be updated when dragging is released in interface  // > Initialization.Init Page:9
+    // initialise the two-body system  // > Initialization.Init Page:10
+    //==================================  // > Initialization.Init Page:11
+    // position larger object such that centre of mass at origin  // > Initialization.Init Page:12
+    //(m+M)*x0 == m*x + M*X;  // > Initialization.Init Page:13
+    X = -x*m/M;  // > Initialization.Init Page:14
+    Y = -y*m/M;  // > Initialization.Init Page:15
+    // check if need to default velocity for circular orbit  // > Initialization.Init Page:16
+    if (boolCircular) {  // > Initialization.Init Page:17
+      // reset initial velocity of smaller object to give circular motion  // > Initialization.Init Page:18
+      vx = 0;  // > Initialization.Init Page:19
+      vy = Math.sqrt(G*M*x/(x-X)/(x-X));  // > Initialization.Init Page:20
+      // switch off  // > Initialization.Init Page:21
+      boolCircular = false;  // > Initialization.Init Page:22
+    }  // > Initialization.Init Page:23
+    // give larger object an initial velocity so that the centre of mass is stationary  // > Initialization.Init Page:24
+    vX = -vx*m/M;  // > Initialization.Init Page:25
+    vY = -vy*m/M;  // > Initialization.Init Page:26
+    // initialise energy  // > Initialization.Init Page:27
+    GPE = U(m,M,r(x,X,y,Y));  // > Initialization.Init Page:28
+    KEsmall = KE(m,vx,vy);  // > Initialization.Init Page:29
+    KElarge = KE(M,vX,vY);  // > Initialization.Init Page:30
+    totalE = GPE + KEsmall + KElarge;  // > Initialization.Init Page:31
+    // analytic two-body expressions  // > Initialization.Init Page:32
+    //======================================  // > Initialization.Init Page:33
+    // relative position  // > Initialization.Init Page:34
+    xrel = x-X;  // > Initialization.Init Page:35
+    yrel = y-Y;  // > Initialization.Init Page:36
+    // relative speed  // > Initialization.Init Page:37
+    vrelx = vx-vX;  // > Initialization.Init Page:38
+    vrely = vy-vY;  // > Initialization.Init Page:39
+    // angular momentum of system  // > Initialization.Init Page:40
+    L = angularMomentum(m,M,h(xrel,yrel,vrelx,vrely));  // > Initialization.Init Page:41
+    var Ueff; //use Ueff for plotting, use radialPot variable for actual simulation  // > Initialization.Init Page:42
+    var Ugraph;  // > Initialization.Init Page:43
+    var L2graph;  // > Initialization.Init Page:44
+    // find minimum point analytically, d(Ueff)/dr = 0  // > Initialization.Init Page:45
+    // Ueff(r) = -G*M*m/r + L*L/(2*reducedMass(m,M)*r*r)  // > Initialization.Init Page:46
+    // d(Ueff)/dr = G*M*m/(r*r) - L*L/(reducedMass(m,M)*r*r*r)  // > Initialization.Init Page:47
+    // 1/rmin = G*M*m*reducedMass(m,M)/(L*L)  // > Initialization.Init Page:48
+    Emin = -G*G*M*M*m*m*reducedMass(m,M)/(2*L*L);  // > Initialization.Init Page:49
+    // Emin = -G*G*M*M*m*m*m/(2*L*L*(Math.pow(1+m/M,3)));  // > Initialization.Init Page:50
+    Emax = Math.max(totalE, Emin/2);  // > Initialization.Init Page:51
+    // fine-tune plot range  // > Initialization.Init Page:52
+    // extend plot range slightly in both directions  // > Initialization.Init Page:53
+    Emin = Emin - 0.1*Math.max(Emax-Emin,1);  // > Initialization.Init Page:54
+    Emax = Emax + 0.1*Math.max(Emax-Emin,1);  // > Initialization.Init Page:55
+    // show greater vertical range for static plot  // > Initialization.Init Page:56
+    EminStatic = 2*Emin;  // > Initialization.Init Page:57
+    EmaxStatic = -EminStatic;  // > Initialization.Init Page:58
+    // calculate the effective radial potential energy, etc. over a mesh  // > Initialization.Init Page:59
+    // started loop from i=1 rather than i=0 to avoid infinities  // > Initialization.Init Page:60
+    var radius;   // > Initialization.Init Page:61
+    for (var i=1; i<numPoints; i++) {  // > Initialization.Init Page:62
+      radius = minRadius + 5*(maxRadius - minRadius)*i/numPoints;  // > Initialization.Init Page:63
+      Ueff = radialPotential(m,M,radius,L);  // > Initialization.Init Page:64
+      // add to trail in htmlview (to both graphs)  // > Initialization.Init Page:65
+      _view.UeffTrail.addPoint(radius,Ueff);  // > Initialization.Init Page:66
+      _view.UeffTrail2.addPoint(radius,Ueff);  // > Initialization.Init Page:67
+      // can also add to show how Ueff comes from GPE and angular momentum term  // > Initialization.Init Page:68
+      Ugraph = U(m,M,radius);  // > Initialization.Init Page:69
+      L2graph = L*L/(2*reducedMass(m,M)*radius*radius);  // > Initialization.Init Page:70
+      _view.UTrail.addPoint(radius,Ugraph);  // > Initialization.Init Page:71
+      _view.L2Trail.addPoint(radius,L2graph);  // > Initialization.Init Page:72
+      // zero energy and total energy shown on graphs with functions  // > Initialization.Init Page:73
+    }  // > Initialization.Init Page:74
+    // check if x-axis should autoscale or not  // > Initialization.Init Page:75
+    if (totalE > radialPotential(m,M,maxRadius,L)) {  // > Initialization.Init Page:76
+      // radius of 10 is where the x-axis normally is displayed until  // > Initialization.Init Page:77
+      boolRad = true;  // > Initialization.Init Page:78
+    } else {  // > Initialization.Init Page:79
+      boolRad = false;  // > Initialization.Init Page:80
+    }  // > Initialization.Init Page:81
+    /*  // > Initialization.Init Page:82
+    // resize actualPotShape  // > Initialization.Init Page:83
+    // _view.actualPotShape.setSize([0.2,0.2]);  // > Initialization.Init Page:84
+    // manage axis drawing for plots  // > Initialization.Init Page:85
+    //_view.plottingPanel.getAxisX().setPosition([0,0.5]);  // > Initialization.Init Page:86
+    //_view.plottingPanel.getAxisY().setPosition([0,0]);  // > Initialization.Init Page:87
+    //_view.plottingPanel2.getAxisX().setPosition([0,0.5]);  // > Initialization.Init Page:88
+    //_view.plottingPanel2.getAxisY().setPosition([0,0]);  // > Initialization.Init Page:89
+    //======= older code ======  // > Initialization.Init Page:90
+    // effective radial potential (exact!)  // > Initialization.Init Page:91
+    //radialPot = U(m,M,r(x,x0,y,y0))/(1+m/M) + 0.5*m*vtheta*vtheta*(1+m/M);  // > Initialization.Init Page:92
+    //radialPot = -G*M*m/r(x,x0,y,y0)/(1+m/M) + 0.5*m*vtheta*vtheta*(1+m/M);   // > Initialization.Init Page:93
+    // 0.5*m*vtheta*vtheta = L*L/(2*m*r*r) is the angular momentum term  // > Initialization.Init Page:94
+    // add the radial velocity terms 0.5*m*vr*vr*(1+m/M) to get the total energy  // > Initialization.Init Page:95
+    // calculate initial angular momentum for smaller object  // > Initialization.Init Page:96
+    //L = m*vy*(x-x0); // just use initial vy, assume y == 0, y0 == 0  // > Initialization.Init Page:97
+    */  // > Initialization.Init Page:98
+  });
+
+  _model.addToInitialization(function() {
+    _initializeSolvers();
+  });
+
+  _model.addToEvolution(function() {
+    if (!__pagesEnabled["Newtonian gravity"]) return;
+    _ODEi_evolution1.step();
+  });
+
+  _model.addToFixedRelations(function() { _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); });
+
+  _model.addToFixedRelations(function() {
+    if (!__pagesEnabled["FixRel Page"]) return;
+    // enable dragging-resize for initial velocity (after simulation paused)  // > FixedRelations.FixRel Page:1
+    dragx = x + vx*scalev;  // > FixedRelations.FixRel Page:2
+    dragy = y + vy*scalev;  // > FixedRelations.FixRel Page:3
+    // analytic expressions  // > FixedRelations.FixRel Page:4
+    //=============================  // > FixedRelations.FixRel Page:5
+    // centre of mass coordinates  // > FixedRelations.FixRel Page:6
+    x0 = (m*x + M*X)/(m+M);  // > FixedRelations.FixRel Page:7
+    y0 = (m*y + M*Y)/(m+M);  // > FixedRelations.FixRel Page:8
+    // energy  // > FixedRelations.FixRel Page:9
+    GPE = U(m,M,r(x,X,y,Y));  // > FixedRelations.FixRel Page:10
+    KEsmall = KE(m,vx,vy);  // > FixedRelations.FixRel Page:11
+    KElarge = KE(M,vX,vY);  // > FixedRelations.FixRel Page:12
+    totalE = GPE + KEsmall + KElarge;  // > FixedRelations.FixRel Page:13
+    // speed (magnitude of velocity)  // > FixedRelations.FixRel Page:14
+    vsmall = Math.sqrt(vx*vx+vy*vy);  // > FixedRelations.FixRel Page:15
+    vlarge = Math.sqrt(vX*vX+vY*vY);  // > FixedRelations.FixRel Page:16
+    // components in polar coordinates  // > FixedRelations.FixRel Page:17
+    vr = vsmall*Math.cos(theta(vx,vy)-theta(x,y));  // > FixedRelations.FixRel Page:18
+    vtheta = vsmall*Math.sin(theta(vx,vy)-theta(x,y));  // > FixedRelations.FixRel Page:19
+    vR = vlarge*Math.cos(theta(vX,vY)-theta(X,Y));  // > FixedRelations.FixRel Page:20
+    vTheta = vlarge*Math.sin(theta(vX,vY)-theta(X,Y));  // > FixedRelations.FixRel Page:21
+    //vR = -vr*m/M;  // > FixedRelations.FixRel Page:22
+    //vTheta = -vtheta*m/M;  // > FixedRelations.FixRel Page:23
+    // two-body expressions  // > FixedRelations.FixRel Page:24
+    //=============================  // > FixedRelations.FixRel Page:25
+    // relative position  // > FixedRelations.FixRel Page:26
+    xrel = x-X;  // > FixedRelations.FixRel Page:27
+    yrel = y-Y;  // > FixedRelations.FixRel Page:28
+    // relative speed  // > FixedRelations.FixRel Page:29
+    vrelx = vx-vX;  // > FixedRelations.FixRel Page:30
+    vrely = vy-vY;  // > FixedRelations.FixRel Page:31
+    // angular momentum of system  // > FixedRelations.FixRel Page:32
+    L = angularMomentum(m,M,h(xrel,yrel,vrelx,vrely));  // > FixedRelations.FixRel Page:33
+    eps = epsilon(G,m,M,r(x,X,y,Y),vrelx,vrely);  // > FixedRelations.FixRel Page:34
+    ecc = eccentricity(G,m,M,h(xrel,yrel,vrelx,vrely),eps);  // > FixedRelations.FixRel Page:35
+    /*  // > FixedRelations.FixRel Page:36
+    // angular momentum (of the smaller mass around origin)  // > FixedRelations.FixRel Page:37
+    Lsmall = m*vtheta*r(x,x0,y,y0);  // > FixedRelations.FixRel Page:38
+    // effective radial potential (exact!)  // > FixedRelations.FixRel Page:39
+    radialPot = calcRadialPot(r(x,x0,y,y0),L);  // > FixedRelations.FixRel Page:40
+    //======= older code ======  // > FixedRelations.FixRel Page:41
+    //U(m,M,r(x,x0,y,y0))/(1+m/M) + 0.5*m*vtheta*vtheta*(1+m/M);  // > FixedRelations.FixRel Page:42
+    //radialPot = -G*M*m/r(x,x0,y,y0)/(1+m/M) + 0.5*m*vtheta*vtheta*(1+m/M);   // > FixedRelations.FixRel Page:43
+    // 0.5*m*vtheta*vtheta = L*L/(2*m*r*r) is the angular momentum term  // > FixedRelations.FixRel Page:44
+    // add the radial velocity terms 0.5*m*vr*vr*(1+m/M) to get the total energy  // > FixedRelations.FixRel Page:45
+    */  // > FixedRelations.FixRel Page:46
+  });
+
+  _model.addToFixedRelations(function() { _isPaused = _model.isPaused(); _isPlaying = _model.isPlaying(); });
+
+  function _initializeSolvers() {
+    for (var i=0,n=_privateOdesList.length; i<n; i++) _privateOdesList[i].initializeSolver();
+  }
+
+  function _automaticResetSolvers() {
+    for (var i=0,n=_privateOdesList.length; i<n; i++) _privateOdesList[i].automaticResetSolver();
+  }
+
+  _model.resetSolvers = function() {
+    for (var i=0,n=_privateOdesList.length; i<n; i++) _privateOdesList[i].resetSolver();
+  };
+
+  _getODE = function (_odeName) {
+    if (_odeName=="Newtonian gravity") return _ODEi_evolution1;
+    return null;
+  }
+
+  function _getEventSolver(_odeName) {
+    var ode = _getODE(_odeName);
+    if (ode===null) return null;
+    return ode.getEventSolver();
+  }
+
+  function _setSolverClass(_odeName, _engine) {
+    var ode = _getODE(_odeName);
+    if (ode===null) return;
+    if (!_engine.setODE) {
+      var classname = _engine.toLowerCase();
+      if      (classname.indexOf("boga")>=0)   _engine = EJSS_ODE_SOLVERS.bogackiShampine23;
+      else if (classname.indexOf("cash")>=0)   _engine = EJSS_ODE_SOLVERS.cashKarp45;
+      else if (classname.indexOf("dopri5")>=0) _engine = EJSS_ODE_SOLVERS.dopri5;
+      else if (classname.indexOf("dopri8")>=0) _engine = EJSS_ODE_SOLVERS.dopri853;
+      else if (classname.indexOf("richa")>=0)  _engine = EJSS_ODE_SOLVERS.eulerRichardson;
+      else if (classname.indexOf("euler")>=0)  _engine = EJSS_ODE_SOLVERS.euler;
+      else if (classname.indexOf("fehlberg87")>=0) _engine = EJSS_ODE_SOLVERS.fehlberg87;
+      else if (classname.indexOf("fehlberg8")>=0)  _engine = EJSS_ODE_SOLVERS.fehlberg8;
+      else if (classname.indexOf("radau")>=0)   _engine = EJSS_ODE_SOLVERS.radau5;
+      else if (classname.indexOf("runge")>=0)  _engine = EJSS_ODE_SOLVERS.rungeKutta4;
+      else if (classname.indexOf("rk4")>=0)    _engine = EJSS_ODE_SOLVERS.rungeKutta4;
+      else if (classname.indexOf("verlet")>=0) _engine = EJSS_ODE_SOLVERS.velocityVerlet;
+    }
+    if (_engine) ode.setSolverClass(_engine);
+  }
+
+  function _ODE_evolution1() {
+    var __odeSelf = {};
+    var __eventSolver;
+    var __solverClass = EJSS_ODE_SOLVERS.rungeKutta4;
+    var __state=[];
+    var __ignoreErrors=false;
+    var __mustInitialize=true;
+    var __isEnabled=true;
+    var __mustUserReinitialize=false;
+    var __mustReinitialize=true;
+
+
+    __odeSelf._getOdeVars = function (){ return["x","X","y","Y","vx","vX","vy","vY","t"]};
+
+    __odeSelf.setSolverClass = function(__aSolverClass) {
+      __solverClass = __aSolverClass;
+      __instantiateSolver();
+    };
+
+    function __instantiateSolver() {
+      __state=[];
+      __pushState();
+      __eventSolver = EJSS_ODE_SOLVERS.interpolatorEventSolver(__solverClass(),__odeSelf);
+      __mustInitialize = true;
+    }
+
+    __odeSelf.setEnabled = function(_enabled) { __isEnabled = _enabled; };
+
+    __odeSelf.getIndependentVariableValue = function() { return __eventSolver.getIndependentVariableValue(); };
+
+    __odeSelf.getInternalStepSize = function() { return __eventSolver.getInternalStepSize(); };
+
+    __odeSelf.isAccelerationIndependentOfVelocity = function() { return false; };
+
+    __odeSelf.initializeSolver = function() {
+      if (__arraysChanged()) { __instantiateSolver(); __odeSelf.initializeSolver(); return; }
+      __pushState();
+      __eventSolver.initialize(dt);
+      __eventSolver.setBestInterpolation(false);
+      __eventSolver.setMaximumInternalSteps(10000);
+      __eventSolver.removeAllEvents();
+      for(k in userEvents1){__eventSolver.addEvent(userEvents1[k]);}
+      __eventSolver.setEstimateFirstStep(false);
+      __eventSolver.setEnableExceptions(false);
+      __eventSolver.setTolerances(0.00001,0.00001);
+      __mustReinitialize = true;
+      __mustInitialize = false;
+    };
+
+    function __pushState() {
+      // Copy our variables to __state[] 
+        var __j=0;
+        var __n=0;
+        var __cIn=0;
+        if (__state[__cIn]!=x) __mustReinitialize = true;
+        __state[__cIn++] = x;
+        if (__state[__cIn]!=X) __mustReinitialize = true;
+        __state[__cIn++] = X;
+        if (__state[__cIn]!=y) __mustReinitialize = true;
+        __state[__cIn++] = y;
+        if (__state[__cIn]!=Y) __mustReinitialize = true;
+        __state[__cIn++] = Y;
+        if (__state[__cIn]!=vx) __mustReinitialize = true;
+        __state[__cIn++] = vx;
+        if (__state[__cIn]!=vX) __mustReinitialize = true;
+        __state[__cIn++] = vX;
+        if (__state[__cIn]!=vy) __mustReinitialize = true;
+        __state[__cIn++] = vy;
+        if (__state[__cIn]!=vY) __mustReinitialize = true;
+        __state[__cIn++] = vY;
+        if (__state[__cIn]!=t) __mustReinitialize = true;
+        __state[__cIn++] = t;
+    }
+
+    function __arraysChanged () {
+      return false;
+    }
+
+    __odeSelf.getEventSolver = function() {
+      return __eventSolver;
+    };
+
+    __odeSelf.resetSolver = function() {
+      __mustUserReinitialize = true;
+    };
+
+    __odeSelf.automaticResetSolver = function() {
+      __mustReinitialize = true;
+    };
+
+    function __errorAction () {
+      if (__ignoreErrors) return;
+      console.log (__eventSolver.getErrorMessage());
+      _pause();
+      // Make sure the solver is reinitialized;
+      __mustReinitialize = true;
+    }
+
+    __odeSelf.step = function() { return __privateStep(false); };
+
+    __odeSelf.solverStep = function() { return __privateStep(true); };
+
+    function __privateStep(__takeMaximumStep) {
+      if (!__isEnabled) return 0;
+      if (dt===0) return 0;
+      if (__mustInitialize) __odeSelf.initializeSolver();
+      if (__arraysChanged()) { __instantiateSolver(); __odeSelf.initializeSolver(); }
+      __eventSolver.setStepSize(dt);
+      __eventSolver.setInternalStepSize(dt);
+      __eventSolver.setMaximumInternalSteps(10000);
+      __eventSolver.setTolerances(0.00001,0.00001);
+      __pushState();
+      if (__mustUserReinitialize) { 
+        __eventSolver.userReinitialize();
+        __mustUserReinitialize = false;
+        __mustReinitialize = false;
+        if (__eventSolver.getErrorCode()!=EJSS_ODE_SOLVERS.ERROR.NO_ERROR) __errorAction();
+      }
+      else if (__mustReinitialize) { 
+        __eventSolver.reinitialize();
+        __mustReinitialize = false;
+        if (__eventSolver.getErrorCode()!=EJSS_ODE_SOLVERS.ERROR.NO_ERROR) __errorAction();
+      }
+      var __stepTaken = __takeMaximumStep ? __eventSolver.maxStep() : __eventSolver.step();
+      // Extract our variables from __state
+        var __i=0;
+        var __cOut=0;
+        x = __state[__cOut++];
+        X = __state[__cOut++];
+        y = __state[__cOut++];
+        Y = __state[__cOut++];
+        vx = __state[__cOut++];
+        vX = __state[__cOut++];
+        vy = __state[__cOut++];
+        vY = __state[__cOut++];
+        t = __state[__cOut++];
+      // Check for error
+      if (__eventSolver.getErrorCode()!=EJSS_ODE_SOLVERS.ERROR.NO_ERROR) __errorAction();
+      return __stepTaken;
+    }
+
+    __odeSelf.getState = function() { return __state; };
+
+    __odeSelf.getRate = function(_aState,_aRate) {
+      // Extract our variables from _aState
+        var __i=0;
+        var __cOut=0;
+        var x = _aState[__cOut++];
+        var X = _aState[__cOut++];
+        var y = _aState[__cOut++];
+        var Y = _aState[__cOut++];
+        var vx = _aState[__cOut++];
+        var vX = _aState[__cOut++];
+        var vy = _aState[__cOut++];
+        var vY = _aState[__cOut++];
+        var t = _aState[__cOut++];
+      // Compute the rate
+        var __cRate=0;
+        _aRate[__cRate++] = vx; // Rate for ODE: Newtonian gravity:x
+        _aRate[__cRate++] = vX; // Rate for ODE: Newtonian gravity:X
+        _aRate[__cRate++] = vy; // Rate for ODE: Newtonian gravity:y
+        _aRate[__cRate++] = vY; // Rate for ODE: Newtonian gravity:Y
+        _aRate[__cRate++] = -F(m,M,r(x,X,y,Y))*Math.cos(theta(x-X,y-Y))/m; // Rate for ODE: Newtonian gravity:vx
+        _aRate[__cRate++] = F(m,M,r(x,X,y,Y))*Math.cos(theta(x-X,y-Y))/M; // Rate for ODE: Newtonian gravity:vX
+        _aRate[__cRate++] = -F(m,M,r(x,X,y,Y))*Math.sin(theta(x-X,y-Y))/m; // Rate for ODE: Newtonian gravity:vy
+        _aRate[__cRate++] = F(m,M,r(x,X,y,Y))*Math.sin(theta(x-X,y-Y))/M; // Rate for ODE: Newtonian gravity:vY
+        _aRate[__cRate++] = 1; // independent variable
+        return _aRate;
+    }; //end of getRate
+
+    __odeSelf._addEvent = function(userCondition,userAction,eventType,eventMethod,maxIter,eventTolerance,endAtEvent){
+    var User_Event = function (userCondition,userAction,eventType,eventMethod,maxIter,eventTolerance,endAtEvent) {
+      var _eventSelf = {};
+
+      _eventSelf.getTypeOfEvent = function() { return eventType; };
+
+      _eventSelf.getRootFindingMethod = function() { return eventMethod; };
+
+      _eventSelf.getMaxIterations = function() { return maxIter; };
+
+      _eventSelf.getTolerance = function() { return eventTolerance; };
+
+      _eventSelf.evaluate = function(_aState) { 
+      // Extract our variables from _aState
+        var __i=0;
+        var __cOut=0;
+        var x = _aState[__cOut++];
+        var X = _aState[__cOut++];
+        var y = _aState[__cOut++];
+        var Y = _aState[__cOut++];
+        var vx = _aState[__cOut++];
+        var vX = _aState[__cOut++];
+        var vy = _aState[__cOut++];
+        var vY = _aState[__cOut++];
+        var t = _aState[__cOut++];
+      return eval(userCondition);
+      };
+
+      _eventSelf.action = function() { 
+      // Extract our variables from __state
+        var __i=0;
+        var __cOut=0;
+        x = __state[__cOut++];
+        X = __state[__cOut++];
+        y = __state[__cOut++];
+        Y = __state[__cOut++];
+        vx = __state[__cOut++];
+        vX = __state[__cOut++];
+        vy = __state[__cOut++];
+        vY = __state[__cOut++];
+        t = __state[__cOut++];
+        var _returnValue = __userDefinedAction();
+      // Copy our variables to __state[] 
+        var __j=0;
+        var __n=0;
+        var __cIn=0;
+        __state[__cIn++] = x;
+        __state[__cIn++] = X;
+        __state[__cIn++] = y;
+        __state[__cIn++] = Y;
+        __state[__cIn++] = vx;
+        __state[__cIn++] = vX;
+        __state[__cIn++] = vy;
+        __state[__cIn++] = vY;
+        __state[__cIn++] = t;
+        return _returnValue;
+      };
+
+      function __userDefinedAction() {
+        if (undefined != functions) eval(functions.toString());
+        eval(userAction);
+        return endAtEvent;
+      }
+
+      return _eventSelf;
+    }; // End of event
+
+   userEvents1.push(User_Event(userCondition,userAction,eventType,eventMethod,maxIter,eventTolerance,endAtEvent));
+   }
+
+    __instantiateSolver();
+
+    return __odeSelf;
+  }
+
+  function _historic_x(__time) {
+    var __index = 0;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_X(__time) {
+    var __index = 0 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_y(__time) {
+    var __index = 0 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_Y(__time) {
+    var __index = 0 + 1 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_vx(__time) {
+    var __index = 0 + 1 + 1 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_vX(__time) {
+    var __index = 0 + 1 + 1 + 1 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_vy(__time) {
+    var __index = 0 + 1 + 1 + 1 + 1 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+  function _historic_vY(__time) {
+    var __index = 0 + 1 + 1 + 1 + 1 + 1 + 1 + 1;
+    return _ODEi_evolution1.getEventSolver().getStateHistory().interpolate(__time,__index);
+  }
+
+    _model._fontResized = function(iBase,iSize,iDelta) {
+      _view._fontResized(iBase,iSize,iDelta);
+  }; // end of _fontResized
+
+  function _getViews() {
+    var _viewsInfo = [];
+    var _counter = 0;
+    _viewsInfo[_counter++] = { name : "Elliptical", width : 800, height : 600 };
+    return _viewsInfo;
+  } // end of _getViews
+
+  function _selectView(_viewNumber) {
+    _view = null;
+    _view = new TwoBodyNewtonianGravitation_View(_topFrame,_viewNumber,_libraryPath,_codebasePath);
+    var _view_super_reset = _view._reset;
+    _view._reset = function() {
+      _view_super_reset();
+      switch(_viewNumber) {
+        case -10 : break; // make Lint happy
+        default :
+        case 0:
+          _view.playPauseButton.setAction("OffClick", _pause); // Elliptical setting action 'OffClick' for element 'playPauseButton'
+          _view.playPauseButton.linkProperty("State",  function() { return _isPaused; } ); // Elliptical linking property 'State' for element 'playPauseButton'
+          _view.playPauseButton.setAction("OnClick", _play); // Elliptical setting action 'OnClick' for element 'playPauseButton'
+          _view.stepButton.setAction("OnClick", _step); // Elliptical setting action 'OnClick' for element 'stepButton'
+          _view.resetButton.setAction("OnClick", _reset); // Elliptical setting action 'OnClick' for element 'resetButton'
+          _view.MSlider.setAction("OnRelease", _initialize); // Elliptical setting action 'OnRelease' for element 'MSlider'
+          _view.MSlider.linkProperty("Value",  function() { return M; }, function(_v) { M = _v; } ); // Elliptical linking property 'Value' for element 'MSlider'
+          _view.MSlider.setAction("OnChange", _initialize); // Elliptical setting action 'OnChange' for element 'MSlider'
+          _view.MSlider.linkProperty("Disabled",  function() { return _isPlaying; } ); // Elliptical linking property 'Disabled' for element 'MSlider'
+          _view.checkBoxCircular.linkProperty("Checked",  function() { return boolCircular; }, function(_v) { boolCircular = _v; } ); // Elliptical linking property 'Checked' for element 'checkBoxCircular'
+          _view.checkBoxCircular.setAction("OnCheckOff", function(_data,_info) {
+  boolCircular=false;
+
+}); // Elliptical setting action 'OnCheckOff' for element 'checkBoxCircular'
+          _view.checkBoxCircular.setAction("OnChange", _initialize); // Elliptical setting action 'OnChange' for element 'checkBoxCircular'
+          _view.checkBoxCircular.linkProperty("Disabled",  function() { return !(x==1 && y==0); } ); // Elliptical linking property 'Disabled' for element 'checkBoxCircular'
+          _view.checkBoxCircular.setAction("OnCheckOn", function(_data,_info) {
+  boolCircular=true;
+
+}); // Elliptical setting action 'OnCheckOn' for element 'checkBoxCircular'
+          _view.vxfield.linkProperty("Value",  function() { return vx; }, function(_v) { vx = _v; } ); // Elliptical linking property 'Value' for element 'vxfield'
+          _view.vxfield.linkProperty("Editable",  function() { return (_isPaused && !boolCircular); } ); // Elliptical linking property 'Editable' for element 'vxfield'
+          _view.vxfield.setAction("OnChange", _initialize); // Elliptical setting action 'OnChange' for element 'vxfield'
+          _view.vyfield.linkProperty("Value",  function() { return vy; }, function(_v) { vy = _v; } ); // Elliptical linking property 'Value' for element 'vyfield'
+          _view.vyfield.linkProperty("Editable",  function() { return (_isPaused && !boolCircular); } ); // Elliptical linking property 'Editable' for element 'vyfield'
+          _view.vyfield.setAction("OnChange", _initialize); // Elliptical setting action 'OnChange' for element 'vyfield'
+          _view.topPanel.linkProperty("Height",  function() { return topHeight; }, function(_v) { topHeight = _v; } ); // Elliptical linking property 'Height' for element 'topPanel'
+          _view.drawingPanel.linkProperty("Height",  function() { return topHeight; }, function(_v) { topHeight = _v; } ); // Elliptical linking property 'Height' for element 'drawingPanel'
+          _view.drawingPanel.linkProperty("TLMessage",  function() { return "time="+_view._format(t,"0.00"); } ); // Elliptical linking property 'TLMessage' for element 'drawingPanel'
+          _view.shapem.linkProperty("SizeX",  function() { return Math.pow(m,1/3)*scalem; } ); // Elliptical linking property 'SizeX' for element 'shapem'
+          _view.shapem.linkProperty("X",  function() { return x; }, function(_v) { x = _v; } ); // Elliptical linking property 'X' for element 'shapem'
+          _view.shapem.linkProperty("Y",  function() { return y; }, function(_v) { y = _v; } ); // Elliptical linking property 'Y' for element 'shapem'
+          _view.shapem.linkProperty("SizeY",  function() { return Math.pow(m,1/3)*scalem; } ); // Elliptical linking property 'SizeY' for element 'shapem'
+          _view.arrowm.linkProperty("SizeX",  function() { return vx*scalev; } ); // Elliptical linking property 'SizeX' for element 'arrowm'
+          _view.arrowm.linkProperty("X",  function() { return x; }, function(_v) { x = _v; } ); // Elliptical linking property 'X' for element 'arrowm'
+          _view.arrowm.linkProperty("Y",  function() { return y; }, function(_v) { y = _v; } ); // Elliptical linking property 'Y' for element 'arrowm'
+          _view.arrowm.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'arrowm'
+          _view.arrowm.linkProperty("SizeY",  function() { return vy*scalev; } ); // Elliptical linking property 'SizeY' for element 'arrowm'
+          _view.VelDrag.setAction("OnRelease", _initialize); // Elliptical setting action 'OnRelease' for element 'VelDrag'
+          _view.VelDrag.linkProperty("X",  function() { return dragx; }, function(_v) { dragx = _v; } ); // Elliptical linking property 'X' for element 'VelDrag'
+          _view.VelDrag.linkProperty("Y",  function() { return dragy; }, function(_v) { dragy = _v; } ); // Elliptical linking property 'Y' for element 'VelDrag'
+          _view.VelDrag.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'VelDrag'
+          _view.VelDrag.setAction("OnDrag", function(_data,_info) {
+  boolCircular=false;
+  vx=(dragx-x)/scalev;
+  vy=(dragy-y)/scalev;
+
+}); // Elliptical setting action 'OnDrag' for element 'VelDrag'
+          _view.text.linkProperty("X",  function() { return dragx; }, function(_v) { dragx = _v; } ); // Elliptical linking property 'X' for element 'text'
+          _view.text.linkProperty("Y",  function() { return dragy; }, function(_v) { dragy = _v; } ); // Elliptical linking property 'Y' for element 'text'
+          _view.text.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'text'
+          _view.shapeM.linkProperty("SizeX",  function() { return Math.pow(M,1/3)*scalem; } ); // Elliptical linking property 'SizeX' for element 'shapeM'
+          _view.shapeM.linkProperty("X",  function() { return X; }, function(_v) { X = _v; } ); // Elliptical linking property 'X' for element 'shapeM'
+          _view.shapeM.linkProperty("Y",  function() { return Y; }, function(_v) { Y = _v; } ); // Elliptical linking property 'Y' for element 'shapeM'
+          _view.shapeM.linkProperty("SizeY",  function() { return Math.pow(M,1/3)*scalem; } ); // Elliptical linking property 'SizeY' for element 'shapeM'
+          _view.arrowM.linkProperty("SizeX",  function() { return vX*scalev; } ); // Elliptical linking property 'SizeX' for element 'arrowM'
+          _view.arrowM.linkProperty("X",  function() { return X; }, function(_v) { X = _v; } ); // Elliptical linking property 'X' for element 'arrowM'
+          _view.arrowM.linkProperty("Y",  function() { return Y; }, function(_v) { Y = _v; } ); // Elliptical linking property 'Y' for element 'arrowM'
+          _view.arrowM.linkProperty("SizeY",  function() { return vY*scalev; } ); // Elliptical linking property 'SizeY' for element 'arrowM'
+          _view.shape0.linkProperty("X",  function() { return x0; }, function(_v) { x0 = _v; } ); // Elliptical linking property 'X' for element 'shape0'
+          _view.shape0.linkProperty("Y",  function() { return y0; }, function(_v) { y0 = _v; } ); // Elliptical linking property 'Y' for element 'shape0'
+          _view.tracem.linkProperty("InputX",  function() { return x; }, function(_v) { x = _v; } ); // Elliptical linking property 'InputX' for element 'tracem'
+          _view.tracem.linkProperty("InputY",  function() { return y; }, function(_v) { y = _v; } ); // Elliptical linking property 'InputY' for element 'tracem'
+          _view.traceM.linkProperty("InputX",  function() { return X; }, function(_v) { X = _v; } ); // Elliptical linking property 'InputX' for element 'traceM'
+          _view.traceM.linkProperty("InputY",  function() { return Y; }, function(_v) { Y = _v; } ); // Elliptical linking property 'InputY' for element 'traceM'
+          _view.trace0.linkProperty("InputX",  function() { return x0; }, function(_v) { x0 = _v; } ); // Elliptical linking property 'InputX' for element 'trace0'
+          _view.trace0.linkProperty("InputY",  function() { return y0; }, function(_v) { y0 = _v; } ); // Elliptical linking property 'InputY' for element 'trace0'
+          _view.arrowX.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'arrowX'
+          _view.textX.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'textX'
+          _view.arrowY.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'arrowY'
+          _view.textY.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'textY'
+          _view.bottomPanel.linkProperty("Height",  function() { return bottomHeight; }, function(_v) { bottomHeight = _v; } ); // Elliptical linking property 'Height' for element 'bottomPanel'
+          _view.plottingPanelVelocity.linkProperty("Height",  function() { return bottomHeight; }, function(_v) { bottomHeight = _v; } ); // Elliptical linking property 'Height' for element 'plottingPanelVelocity'
+          _view.vthetaTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'vthetaTrail'
+          _view.vthetaTrail.linkProperty("InputY",  function() { return vtheta; }, function(_v) { vtheta = _v; } ); // Elliptical linking property 'InputY' for element 'vthetaTrail'
+          _view.vrTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'vrTrail'
+          _view.vrTrail.linkProperty("InputY",  function() { return vr; }, function(_v) { vr = _v; } ); // Elliptical linking property 'InputY' for element 'vrTrail'
+          _view.vsmallTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'vsmallTrail'
+          _view.vsmallTrail.linkProperty("InputY",  function() { return vsmall; }, function(_v) { vsmall = _v; } ); // Elliptical linking property 'InputY' for element 'vsmallTrail'
+          _view.vxTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'vxTrail'
+          _view.vxTrail.linkProperty("Visibility",  function() { return boolCartesian; }, function(_v) { boolCartesian = _v; } ); // Elliptical linking property 'Visibility' for element 'vxTrail'
+          _view.vxTrail.linkProperty("InputY",  function() { return vx; }, function(_v) { vx = _v; } ); // Elliptical linking property 'InputY' for element 'vxTrail'
+          _view.vyTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'vyTrail'
+          _view.vyTrail.linkProperty("Visibility",  function() { return boolCartesian; }, function(_v) { boolCartesian = _v; } ); // Elliptical linking property 'Visibility' for element 'vyTrail'
+          _view.vyTrail.linkProperty("InputY",  function() { return vy; }, function(_v) { vy = _v; } ); // Elliptical linking property 'InputY' for element 'vyTrail'
+          _view.plottingPanelAnalytic.linkProperty("Height",  function() { return bottomHeight; }, function(_v) { bottomHeight = _v; } ); // Elliptical linking property 'Height' for element 'plottingPanelAnalytic'
+          _view.plottingPanelAnalytic.linkProperty("MaximumY",  function() { return Emax; }, function(_v) { Emax = _v; } ); // Elliptical linking property 'MaximumY' for element 'plottingPanelAnalytic'
+          _view.plottingPanelAnalytic.linkProperty("MaximumX",  function() { return maxRadius; }, function(_v) { maxRadius = _v; } ); // Elliptical linking property 'MaximumX' for element 'plottingPanelAnalytic'
+          _view.plottingPanelAnalytic.linkProperty("MinimumY",  function() { return Emin; }, function(_v) { Emin = _v; } ); // Elliptical linking property 'MinimumY' for element 'plottingPanelAnalytic'
+          _view.plottingPanelAnalytic.linkProperty("AutoScaleX",  function() { return boolRad; }, function(_v) { boolRad = _v; } ); // Elliptical linking property 'AutoScaleX' for element 'plottingPanelAnalytic'
+          _view.actualPotShape.linkProperty("X",  function() { return r(x,X,y,Y); } ); // Elliptical linking property 'X' for element 'actualPotShape'
+          _view.actualPotShape.linkProperty("Y",  function() { return radialPotential(m,M,r(x,X,y,Y),angularMomentum(m,M,h(xrel,yrel,vrelx,vrely))); } ); // Elliptical linking property 'Y' for element 'actualPotShape'
+          _view.actualPotTrail.linkProperty("InputX",  function() { return r(x,X,y,Y); } ); // Elliptical linking property 'InputX' for element 'actualPotTrail'
+          _view.actualPotTrail.linkProperty("InputY",  function() { return radialPotential(m,M,r(x,X,y,Y),angularMomentum(m,M,h(xrel,yrel,vrelx,vrely))); } ); // Elliptical linking property 'InputY' for element 'actualPotTrail'
+          _view.analyticCurveETotal2.linkProperty("Y",  function() { return totalE; }, function(_v) { totalE = _v; } ); // Elliptical linking property 'Y' for element 'analyticCurveETotal2'
+          _view.analyticCurveETotal2.linkProperty("Visibility",  function() { return boolTE; }, function(_v) { boolTE = _v; } ); // Elliptical linking property 'Visibility' for element 'analyticCurveETotal2'
+          _view.CartesianCheckBox.linkProperty("Checked",  function() { return boolCartesian; }, function(_v) { boolCartesian = _v; } ); // Elliptical linking property 'Checked' for element 'CartesianCheckBox'
+          _view.TECheckBox.linkProperty("Checked",  function() { return boolTE; }, function(_v) { boolTE = _v; } ); // Elliptical linking property 'Checked' for element 'TECheckBox'
+          _view.bottomMostPanel.linkProperty("Height",  function() { return bottomMostHeight; }, function(_v) { bottomMostHeight = _v; } ); // Elliptical linking property 'Height' for element 'bottomMostPanel'
+          _view.plottingPanelEnergy.linkProperty("Height",  function() { return bottomMostHeight; }, function(_v) { bottomMostHeight = _v; } ); // Elliptical linking property 'Height' for element 'plottingPanelEnergy'
+          _view.GPETrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'GPETrail'
+          _view.GPETrail.linkProperty("InputY",  function() { return GPE; }, function(_v) { GPE = _v; } ); // Elliptical linking property 'InputY' for element 'GPETrail'
+          _view.KEsmallTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'KEsmallTrail'
+          _view.KEsmallTrail.linkProperty("InputY",  function() { return KEsmall; }, function(_v) { KEsmall = _v; } ); // Elliptical linking property 'InputY' for element 'KEsmallTrail'
+          _view.KElargeTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'KElargeTrail'
+          _view.KElargeTrail.linkProperty("InputY",  function() { return KElarge; }, function(_v) { KElarge = _v; } ); // Elliptical linking property 'InputY' for element 'KElargeTrail'
+          _view.totalETrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'totalETrail'
+          _view.totalETrail.linkProperty("Visibility",  function() { return boolTE; }, function(_v) { boolTE = _v; } ); // Elliptical linking property 'Visibility' for element 'totalETrail'
+          _view.totalETrail.linkProperty("InputY",  function() { return totalE; }, function(_v) { totalE = _v; } ); // Elliptical linking property 'InputY' for element 'totalETrail'
+          _view.zeroETrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'zeroETrail'
+          _view.epsilonTrail.linkProperty("InputX",  function() { return t; }, function(_v) { t = _v; } ); // Elliptical linking property 'InputX' for element 'epsilonTrail'
+          _view.epsilonTrail.linkProperty("InputY",  function() { return eps; }, function(_v) { eps = _v; } ); // Elliptical linking property 'InputY' for element 'epsilonTrail'
+          _view.plottingPanelAnalytic2.linkProperty("Height",  function() { return bottomMostHeight; }, function(_v) { bottomMostHeight = _v; } ); // Elliptical linking property 'Height' for element 'plottingPanelAnalytic2'
+          _view.plottingPanelAnalytic2.linkProperty("MaximumY",  function() { return EmaxStatic; }, function(_v) { EmaxStatic = _v; } ); // Elliptical linking property 'MaximumY' for element 'plottingPanelAnalytic2'
+          _view.plottingPanelAnalytic2.linkProperty("MaximumX",  function() { return maxRadius; }, function(_v) { maxRadius = _v; } ); // Elliptical linking property 'MaximumX' for element 'plottingPanelAnalytic2'
+          _view.plottingPanelAnalytic2.linkProperty("MinimumY",  function() { return EminStatic; }, function(_v) { EminStatic = _v; } ); // Elliptical linking property 'MinimumY' for element 'plottingPanelAnalytic2'
+          _view.plottingPanelAnalytic2.linkProperty("AutoScaleX",  function() { return boolRad; }, function(_v) { boolRad = _v; } ); // Elliptical linking property 'AutoScaleX' for element 'plottingPanelAnalytic2'
+          _view.plottingPanelAnalytic2.linkProperty("BRMessage",  function() { return "eccentricity="+_view._format(ecc,"0.000"); } ); // Elliptical linking property 'BRMessage' for element 'plottingPanelAnalytic2'
+          _view.analyticCurveETotal.linkProperty("Y",  function() { return totalE; }, function(_v) { totalE = _v; } ); // Elliptical linking property 'Y' for element 'analyticCurveETotal'
+          _view.analyticCurveETotal.linkProperty("Visibility",  function() { return boolTE; }, function(_v) { boolTE = _v; } ); // Elliptical linking property 'Visibility' for element 'analyticCurveETotal'
+          break;
+      } // end of switch
+    }; // end of new reset
+
+    _model.setView(_view);
+    _model.reset();
+    _view._enableEPub();
+  } // end of _selectView
+
+  _model.setAutoplay(false);
+  _model.setFPS(24);
+  _model.setStepsPerDisplay(1);
+  _selectView(_model._autoSelectView(_getViews())); // this includes _model.reset()
+  return _model;
+}
+
+function TwoBodyNewtonianGravitation_View (_topFrame,_viewNumber,_libraryPath,_codebasePath) {
+  var _view;
+  switch(_viewNumber) {
+    case -10 : break; // make Lint happy
+    default :
+    case 0: _view = TwoBodyNewtonianGravitation_View_0 (_topFrame); break;
+  } // end of switch
+
+  if (_codebasePath) _view._setResourcePath(_codebasePath);
+
+  if (_libraryPath) _view._setLibraryPath(_libraryPath);
+
+  _view._addDescriptionPage('Introduction','./TwoBodyNewtonianGravitation_Intro_1.html');
+
+  return _view;
+} // end of main function
+
+function TwoBodyNewtonianGravitation_View_0 (_topFrame) {
+  var _view = EJSS_CORE.createView(_topFrame);
+
+  _view._reset = function() {
+    _view._clearAll();
+    _view._addElement(EJSS_INTERFACE.panel,"labelPanel", _view._topFrame) // EJsS HtmlView.Elliptical: declaration of element 'labelPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"label", _view.labelPanel) // EJsS HtmlView.Elliptical: declaration of element 'label'
+      .setProperty("Foreground","Black") // EJsS HtmlView.Elliptical: setting property 'Foreground' for element 'label'
+      .setProperty("Text","Two-Body Newtonian Gravitation") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'label'
+      .setProperty("Font","normal bold 30px ") // EJsS HtmlView.Elliptical: setting property 'Font' for element 'label'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"displayPanel", _view._topFrame) // EJsS HtmlView.Elliptical: declaration of element 'displayPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"controlPanel", _view.displayPanel) // EJsS HtmlView.Elliptical: declaration of element 'controlPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'controlPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.twoStateButton,"playPauseButton", _view.controlPanel) // EJsS HtmlView.Elliptical: declaration of element 'playPauseButton'
+      .setProperty("Tooltip","Play/Pause") // EJsS HtmlView.Elliptical: setting property 'Tooltip' for element 'playPauseButton'
+      .setProperty("ImageOnUrl","/org/opensourcephysics/resources/controls/images/play.gif") // EJsS HtmlView.Elliptical: setting property 'ImageOnUrl' for element 'playPauseButton'
+      .setProperty("ImageOffUrl","/org/opensourcephysics/resources/controls/images/pause.gif") // EJsS HtmlView.Elliptical: setting property 'ImageOffUrl' for element 'playPauseButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"stepButton", _view.controlPanel) // EJsS HtmlView.Elliptical: declaration of element 'stepButton'
+      .setProperty("Tooltip","Step forward") // EJsS HtmlView.Elliptical: setting property 'Tooltip' for element 'stepButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/stepforward.gif") // EJsS HtmlView.Elliptical: setting property 'ImageUrl' for element 'stepButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.button,"resetButton", _view.controlPanel) // EJsS HtmlView.Elliptical: declaration of element 'resetButton'
+      .setProperty("Tooltip","Reset simulation") // EJsS HtmlView.Elliptical: setting property 'Tooltip' for element 'resetButton'
+      .setProperty("ImageUrl","/org/opensourcephysics/resources/controls/images/reset.gif") // EJsS HtmlView.Elliptical: setting property 'ImageUrl' for element 'resetButton'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"panelMass", _view.controlPanel) // EJsS HtmlView.Elliptical: declaration of element 'panelMass'
+      .setProperty("BorderColor","Red") // EJsS HtmlView.Elliptical: setting property 'BorderColor' for element 'panelMass'
+      .setProperty("BorderWidth",1) // EJsS HtmlView.Elliptical: setting property 'BorderWidth' for element 'panelMass'
+      .setProperty("Display","inline-block") // EJsS HtmlView.Elliptical: setting property 'Display' for element 'panelMass'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"MLabel", _view.panelMass) // EJsS HtmlView.Elliptical: declaration of element 'MLabel'
+      .setProperty("Text","M/m =") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'MLabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.slider,"MSlider", _view.panelMass) // EJsS HtmlView.Elliptical: declaration of element 'MSlider'
+      .setProperty("Minimum",1) // EJsS HtmlView.Elliptical: setting property 'Minimum' for element 'MSlider'
+      .setProperty("Maximum",100) // EJsS HtmlView.Elliptical: setting property 'Maximum' for element 'MSlider'
+      .setProperty("ShowText",true) // EJsS HtmlView.Elliptical: setting property 'ShowText' for element 'MSlider'
+      .setProperty("Format","0") // EJsS HtmlView.Elliptical: setting property 'Format' for element 'MSlider'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"panelVelocity", _view.controlPanel) // EJsS HtmlView.Elliptical: declaration of element 'panelVelocity'
+      .setProperty("BorderColor","Blue") // EJsS HtmlView.Elliptical: setting property 'BorderColor' for element 'panelVelocity'
+      .setProperty("BorderWidth",1) // EJsS HtmlView.Elliptical: setting property 'BorderWidth' for element 'panelVelocity'
+      .setProperty("Display","inline-block") // EJsS HtmlView.Elliptical: setting property 'Display' for element 'panelVelocity'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.checkBox,"checkBoxCircular", _view.panelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'checkBoxCircular'
+      .setProperty("Text","Circular Orbit") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'checkBoxCircular'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"vxlabel", _view.panelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vxlabel'
+      .setProperty("Text","vx =") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'vxlabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"vxfield", _view.panelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vxfield'
+      .setProperty("Width",50) // EJsS HtmlView.Elliptical: setting property 'Width' for element 'vxfield'
+      .setProperty("Format","0.000") // EJsS HtmlView.Elliptical: setting property 'Format' for element 'vxfield'
+      .setProperty("Font","normal normal 12px ") // EJsS HtmlView.Elliptical: setting property 'Font' for element 'vxfield'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"vylabel", _view.panelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vylabel'
+      .setProperty("Text","vy =") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'vylabel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.numberField,"vyfield", _view.panelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vyfield'
+      .setProperty("Width",50) // EJsS HtmlView.Elliptical: setting property 'Width' for element 'vyfield'
+      .setProperty("Format","0.000") // EJsS HtmlView.Elliptical: setting property 'Format' for element 'vyfield'
+      .setProperty("Font","normal normal 12px ") // EJsS HtmlView.Elliptical: setting property 'Font' for element 'vyfield'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"topPanel", _view.displayPanel) // EJsS HtmlView.Elliptical: declaration of element 'topPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'topPanel'
+      .setProperty("Display","block") // EJsS HtmlView.Elliptical: setting property 'Display' for element 'topPanel'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.drawingPanel,"drawingPanel", _view.topPanel) // EJsS HtmlView.Elliptical: declaration of element 'drawingPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'drawingPanel'
+      .setProperty("Background","Black") // EJsS HtmlView.Elliptical: setting property 'Background' for element 'drawingPanel'
+      .setProperty("Enabled",true) // EJsS HtmlView.Elliptical: setting property 'Enabled' for element 'drawingPanel'
+      .setProperty("SquareAspect",true) // EJsS HtmlView.Elliptical: setting property 'SquareAspect' for element 'drawingPanel'
+      .setProperty("MaximumY",3) // EJsS HtmlView.Elliptical: setting property 'MaximumY' for element 'drawingPanel'
+      .setProperty("MaximumX",5) // EJsS HtmlView.Elliptical: setting property 'MaximumX' for element 'drawingPanel'
+      .setProperty("MinimumX",-5) // EJsS HtmlView.Elliptical: setting property 'MinimumX' for element 'drawingPanel'
+      .setProperty("MinimumY",-3) // EJsS HtmlView.Elliptical: setting property 'MinimumY' for element 'drawingPanel'
+      .setProperty("AutoScaleY",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleY' for element 'drawingPanel'
+      .setProperty("AutoScaleX",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleX' for element 'drawingPanel'
+      .setProperty("BLMessage","red: mass M \n blue: mass m \n white: centre of mass") // EJsS HtmlView.Elliptical: setting property 'BLMessage' for element 'drawingPanel'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.shape,"shapem", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'shapem'
+      .setProperty("FillColor","blue") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'shapem'
+      .setProperty("DrawLines",false) // EJsS HtmlView.Elliptical: setting property 'DrawLines' for element 'shapem'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.arrow,"arrowm", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'arrowm'
+      .setProperty("LineColor","blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'arrowm'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'arrowm'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.shape,"VelDrag", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'VelDrag'
+      .setProperty("DrawLines",false) // EJsS HtmlView.Elliptical: setting property 'DrawLines' for element 'VelDrag'
+      .setProperty("DrawFill",false) // EJsS HtmlView.Elliptical: setting property 'DrawFill' for element 'VelDrag'
+      .setProperty("EnabledPosition","ENABLED_ANY") // EJsS HtmlView.Elliptical: setting property 'EnabledPosition' for element 'VelDrag'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.text,"text", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'text'
+      .setProperty("FillColor","White") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'text'
+      .setProperty("RelativePosition","SOUTH_WEST") // EJsS HtmlView.Elliptical: setting property 'RelativePosition' for element 'text'
+      .setProperty("Text","Drag arrow to \n adjust velocity") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'text'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.shape,"shapeM", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'shapeM'
+      .setProperty("FillColor","red") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'shapeM'
+      .setProperty("DrawLines",false) // EJsS HtmlView.Elliptical: setting property 'DrawLines' for element 'shapeM'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.arrow,"arrowM", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'arrowM'
+      .setProperty("LineColor","red") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'arrowM'
+      .setProperty("Visibility",false) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'arrowM'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.shape,"shape0", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'shape0'
+      .setProperty("FillColor","White") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'shape0'
+      .setProperty("ShapeType","ELLIPSE") // EJsS HtmlView.Elliptical: setting property 'ShapeType' for element 'shape0'
+      .setProperty("LineColor","black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'shape0'
+      .setProperty("DrawLines",false) // EJsS HtmlView.Elliptical: setting property 'DrawLines' for element 'shape0'
+      .setProperty("DrawFill",true) // EJsS HtmlView.Elliptical: setting property 'DrawFill' for element 'shape0'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trace,"tracem", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'tracem'
+      .setProperty("LineColor","blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'tracem'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'tracem'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'tracem'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trace,"traceM", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'traceM'
+      .setProperty("LineColor","red") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'traceM'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'traceM'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'traceM'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trace,"trace0", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'trace0'
+      .setProperty("LineColor","white") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'trace0'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'trace0'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.arrow,"arrowX", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'arrowX'
+      .setProperty("SizeX",0.4) // EJsS HtmlView.Elliptical: setting property 'SizeX' for element 'arrowX'
+      .setProperty("LineColor","White") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'arrowX'
+      .setProperty("X",-4) // EJsS HtmlView.Elliptical: setting property 'X' for element 'arrowX'
+      .setProperty("Y",1) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'arrowX'
+      .setProperty("SizeY",0) // EJsS HtmlView.Elliptical: setting property 'SizeY' for element 'arrowX'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.text,"textX", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'textX'
+      .setProperty("FillColor","White") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'textX'
+      .setProperty("RelativePosition","NORTH_WEST") // EJsS HtmlView.Elliptical: setting property 'RelativePosition' for element 'textX'
+      .setProperty("X",-3.6) // EJsS HtmlView.Elliptical: setting property 'X' for element 'textX'
+      .setProperty("Y",1) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'textX'
+      .setProperty("Text","x") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'textX'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.arrow,"arrowY", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'arrowY'
+      .setProperty("SizeX",0) // EJsS HtmlView.Elliptical: setting property 'SizeX' for element 'arrowY'
+      .setProperty("LineColor","White") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'arrowY'
+      .setProperty("X",-4) // EJsS HtmlView.Elliptical: setting property 'X' for element 'arrowY'
+      .setProperty("Y",1) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'arrowY'
+      .setProperty("SizeY",0.4) // EJsS HtmlView.Elliptical: setting property 'SizeY' for element 'arrowY'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.text,"textY", _view.drawingPanel) // EJsS HtmlView.Elliptical: declaration of element 'textY'
+      .setProperty("FillColor","White") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'textY'
+      .setProperty("RelativePosition","SOUTH_EAST") // EJsS HtmlView.Elliptical: setting property 'RelativePosition' for element 'textY'
+      .setProperty("X",-4) // EJsS HtmlView.Elliptical: setting property 'X' for element 'textY'
+      .setProperty("Y",1.4) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'textY'
+      .setProperty("Text","y") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'textY'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"bottomPanel", _view.displayPanel) // EJsS HtmlView.Elliptical: declaration of element 'bottomPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'bottomPanel'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.plottingPanel,"plottingPanelVelocity", _view.bottomPanel) // EJsS HtmlView.Elliptical: declaration of element 'plottingPanelVelocity'
+      .setProperty("Width","50%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'plottingPanelVelocity'
+      .setProperty("CSS",{ "float":"left"}) // EJsS HtmlView.Elliptical: setting property 'CSS' for element 'plottingPanelVelocity'
+      .setProperty("XFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'XFixedTick' for element 'plottingPanelVelocity'
+      .setProperty("Title","Kinematics of blue mass m") // EJsS HtmlView.Elliptical: setting property 'Title' for element 'plottingPanelVelocity'
+      .setProperty("MaximumY",1) // EJsS HtmlView.Elliptical: setting property 'MaximumY' for element 'plottingPanelVelocity'
+      .setProperty("MaximumX",1) // EJsS HtmlView.Elliptical: setting property 'MaximumX' for element 'plottingPanelVelocity'
+      .setProperty("YFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'YFixedTick' for element 'plottingPanelVelocity'
+      .setProperty("TRMessage","black: tangential velocity \n blue: radial velocity") // EJsS HtmlView.Elliptical: setting property 'TRMessage' for element 'plottingPanelVelocity'
+      .setProperty("MinimumX",0) // EJsS HtmlView.Elliptical: setting property 'MinimumX' for element 'plottingPanelVelocity'
+      .setProperty("MinimumY",-1) // EJsS HtmlView.Elliptical: setting property 'MinimumY' for element 'plottingPanelVelocity'
+      .setProperty("TitleY","Velocity") // EJsS HtmlView.Elliptical: setting property 'TitleY' for element 'plottingPanelVelocity'
+      .setProperty("AutoScaleY",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleY' for element 'plottingPanelVelocity'
+      .setProperty("TitleX","Time") // EJsS HtmlView.Elliptical: setting property 'TitleX' for element 'plottingPanelVelocity'
+      .setProperty("AutoScaleX",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleX' for element 'plottingPanelVelocity'
+      .setProperty("TitleFont","normal bold 12px ") // EJsS HtmlView.Elliptical: setting property 'TitleFont' for element 'plottingPanelVelocity'
+      .setProperty("GuttersColor","LightGray") // EJsS HtmlView.Elliptical: setting property 'GuttersColor' for element 'plottingPanelVelocity'
+      .setProperty("LineWidth",0) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'plottingPanelVelocity'
+      .setProperty("BRMessage","green: vx \n magenta: vy") // EJsS HtmlView.Elliptical: setting property 'BRMessage' for element 'plottingPanelVelocity'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"vthetaTrail", _view.plottingPanelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vthetaTrail'
+      .setProperty("LineColor","blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'vthetaTrail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'vthetaTrail'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'vthetaTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"vrTrail", _view.plottingPanelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vrTrail'
+      .setProperty("LineColor","black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'vrTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'vrTrail'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'vrTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"vsmallTrail", _view.plottingPanelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vsmallTrail'
+      .setProperty("LineColor","Gray") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'vsmallTrail'
+      .setProperty("Visibility",false) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'vsmallTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'vsmallTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"vxTrail", _view.plottingPanelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vxTrail'
+      .setProperty("LineColor","green") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'vxTrail'
+      .setProperty("Attributes",{ "stroke-dasharray":"8 8 8 8" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'vxTrail'
+      .setProperty("LineWidth",1) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'vxTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"vyTrail", _view.plottingPanelVelocity) // EJsS HtmlView.Elliptical: declaration of element 'vyTrail'
+      .setProperty("LineColor","Magenta") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'vyTrail'
+      .setProperty("Attributes",{ "stroke-dasharray":"4 4 4 4" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'vyTrail'
+      .setProperty("LineWidth",1) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'vyTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.plottingPanel,"plottingPanelAnalytic", _view.bottomPanel) // EJsS HtmlView.Elliptical: declaration of element 'plottingPanelAnalytic'
+      .setProperty("Width","50%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'plottingPanelAnalytic'
+      .setProperty("CSS",{ "float":"right"}) // EJsS HtmlView.Elliptical: setting property 'CSS' for element 'plottingPanelAnalytic'
+      .setProperty("XFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'XFixedTick' for element 'plottingPanelAnalytic'
+      .setProperty("Title","Effective radial potential energy") // EJsS HtmlView.Elliptical: setting property 'Title' for element 'plottingPanelAnalytic'
+      .setProperty("YFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'YFixedTick' for element 'plottingPanelAnalytic'
+      .setProperty("MinimumX",0) // EJsS HtmlView.Elliptical: setting property 'MinimumX' for element 'plottingPanelAnalytic'
+      .setProperty("TitleY","Energy") // EJsS HtmlView.Elliptical: setting property 'TitleY' for element 'plottingPanelAnalytic'
+      .setProperty("AutoScaleY",false) // EJsS HtmlView.Elliptical: setting property 'AutoScaleY' for element 'plottingPanelAnalytic'
+      .setProperty("TitleX","Radial distance") // EJsS HtmlView.Elliptical: setting property 'TitleX' for element 'plottingPanelAnalytic'
+      .setProperty("TitleFont","normal bold 12px ") // EJsS HtmlView.Elliptical: setting property 'TitleFont' for element 'plottingPanelAnalytic'
+      .setProperty("LineWidth",0) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'plottingPanelAnalytic'
+      .setProperty("BRMessage","dashed: total energy") // EJsS HtmlView.Elliptical: setting property 'BRMessage' for element 'plottingPanelAnalytic'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"UeffTrail", _view.plottingPanelAnalytic) // EJsS HtmlView.Elliptical: declaration of element 'UeffTrail'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'UeffTrail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'UeffTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'UeffTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.shape,"actualPotShape", _view.plottingPanelAnalytic) // EJsS HtmlView.Elliptical: declaration of element 'actualPotShape'
+      .setProperty("ResizesGroup",true) // EJsS HtmlView.Elliptical: setting property 'ResizesGroup' for element 'actualPotShape'
+      .setProperty("FillColor","Blue") // EJsS HtmlView.Elliptical: setting property 'FillColor' for element 'actualPotShape'
+      .setProperty("ShapeType","ELLIPSE") // EJsS HtmlView.Elliptical: setting property 'ShapeType' for element 'actualPotShape'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"actualPotTrail", _view.plottingPanelAnalytic) // EJsS HtmlView.Elliptical: declaration of element 'actualPotTrail'
+      .setProperty("LineColor","Blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'actualPotTrail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'actualPotTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'actualPotTrail'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'actualPotTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.analyticCurve,"analyticCurveETotal2", _view.plottingPanelAnalytic) // EJsS HtmlView.Elliptical: declaration of element 'analyticCurveETotal2'
+      .setProperty("Attributes",{ "stroke-dasharray":"4 4 4 4" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'analyticCurveETotal2'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'analyticCurveETotal2'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.analyticCurve,"analyticCurveZero2", _view.plottingPanelAnalytic) // EJsS HtmlView.Elliptical: declaration of element 'analyticCurveZero2'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'analyticCurveZero2'
+      .setProperty("Y",0) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'analyticCurveZero2'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"optionPanel", _view.displayPanel) // EJsS HtmlView.Elliptical: declaration of element 'optionPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'optionPanel'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"panelGraphOptions", _view.optionPanel) // EJsS HtmlView.Elliptical: declaration of element 'panelGraphOptions'
+      .setProperty("BorderColor","Black") // EJsS HtmlView.Elliptical: setting property 'BorderColor' for element 'panelGraphOptions'
+      .setProperty("BorderWidth",1) // EJsS HtmlView.Elliptical: setting property 'BorderWidth' for element 'panelGraphOptions'
+      .setProperty("Display","inline-block") // EJsS HtmlView.Elliptical: setting property 'Display' for element 'panelGraphOptions'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.imageAndTextButton,"labelShow", _view.panelGraphOptions) // EJsS HtmlView.Elliptical: declaration of element 'labelShow'
+      .setProperty("Text","Show:") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'labelShow'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.checkBox,"CartesianCheckBox", _view.panelGraphOptions) // EJsS HtmlView.Elliptical: declaration of element 'CartesianCheckBox'
+      .setProperty("Text","Cartesian components (vx, vy)") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'CartesianCheckBox'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.checkBox,"TECheckBox", _view.panelGraphOptions) // EJsS HtmlView.Elliptical: declaration of element 'TECheckBox'
+      .setProperty("Text","Total Energy") // EJsS HtmlView.Elliptical: setting property 'Text' for element 'TECheckBox'
+      ;
+
+    _view._addElement(EJSS_INTERFACE.panel,"bottomMostPanel", _view.displayPanel) // EJsS HtmlView.Elliptical: declaration of element 'bottomMostPanel'
+      .setProperty("Width","100%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'bottomMostPanel'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.plottingPanel,"plottingPanelEnergy", _view.bottomMostPanel) // EJsS HtmlView.Elliptical: declaration of element 'plottingPanelEnergy'
+      .setProperty("Width","50%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'plottingPanelEnergy'
+      .setProperty("CSS",{ "float":"left"}) // EJsS HtmlView.Elliptical: setting property 'CSS' for element 'plottingPanelEnergy'
+      .setProperty("XFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'XFixedTick' for element 'plottingPanelEnergy'
+      .setProperty("Title","Dynamics of two-body system") // EJsS HtmlView.Elliptical: setting property 'Title' for element 'plottingPanelEnergy'
+      .setProperty("MaximumY",1) // EJsS HtmlView.Elliptical: setting property 'MaximumY' for element 'plottingPanelEnergy'
+      .setProperty("MaximumX",1) // EJsS HtmlView.Elliptical: setting property 'MaximumX' for element 'plottingPanelEnergy'
+      .setProperty("YFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'YFixedTick' for element 'plottingPanelEnergy'
+      .setProperty("TRMessage","black: gravitational \n blue: kinetic (mass m) \n red: kinetic (mass M)") // EJsS HtmlView.Elliptical: setting property 'TRMessage' for element 'plottingPanelEnergy'
+      .setProperty("MinimumX",0) // EJsS HtmlView.Elliptical: setting property 'MinimumX' for element 'plottingPanelEnergy'
+      .setProperty("MinimumY",-1) // EJsS HtmlView.Elliptical: setting property 'MinimumY' for element 'plottingPanelEnergy'
+      .setProperty("TitleY","Energy") // EJsS HtmlView.Elliptical: setting property 'TitleY' for element 'plottingPanelEnergy'
+      .setProperty("AutoScaleY",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleY' for element 'plottingPanelEnergy'
+      .setProperty("TitleX","Time") // EJsS HtmlView.Elliptical: setting property 'TitleX' for element 'plottingPanelEnergy'
+      .setProperty("AutoScaleX",true) // EJsS HtmlView.Elliptical: setting property 'AutoScaleX' for element 'plottingPanelEnergy'
+      .setProperty("TitleFont","normal bold 12px ") // EJsS HtmlView.Elliptical: setting property 'TitleFont' for element 'plottingPanelEnergy'
+      .setProperty("GuttersColor","LightGray") // EJsS HtmlView.Elliptical: setting property 'GuttersColor' for element 'plottingPanelEnergy'
+      .setProperty("LineWidth",0) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'plottingPanelEnergy'
+      .setProperty("BRMessage","dashed: total energy") // EJsS HtmlView.Elliptical: setting property 'BRMessage' for element 'plottingPanelEnergy'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"GPETrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'GPETrail'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'GPETrail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'GPETrail'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'GPETrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"KEsmallTrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'KEsmallTrail'
+      .setProperty("LineColor","Blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'KEsmallTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'KEsmallTrail'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'KEsmallTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"KElargeTrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'KElargeTrail'
+      .setProperty("LineColor","red") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'KElargeTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'KElargeTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"totalETrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'totalETrail'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'totalETrail'
+      .setProperty("Attributes",{ "stroke-dasharray":"4 4 4 4" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'totalETrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'totalETrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"zeroETrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'zeroETrail'
+      .setProperty("LineColor","black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'zeroETrail'
+      .setProperty("Attributes",{ "stroke-dasharray":"8 8 8 8" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'zeroETrail'
+      .setProperty("Visibility",false) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'zeroETrail'
+      .setProperty("InputY",0) // EJsS HtmlView.Elliptical: setting property 'InputY' for element 'zeroETrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'zeroETrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"epsilonTrail", _view.plottingPanelEnergy) // EJsS HtmlView.Elliptical: declaration of element 'epsilonTrail'
+      .setProperty("LineColor","green") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'epsilonTrail'
+      .setProperty("Attributes",{ "stroke-dasharray":"8 8 8 8" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'epsilonTrail'
+      .setProperty("Visibility",false) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'epsilonTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'epsilonTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.plottingPanel,"plottingPanelAnalytic2", _view.bottomMostPanel) // EJsS HtmlView.Elliptical: declaration of element 'plottingPanelAnalytic2'
+      .setProperty("Width","50%") // EJsS HtmlView.Elliptical: setting property 'Width' for element 'plottingPanelAnalytic2'
+      .setProperty("CSS",{ "float":"right"}) // EJsS HtmlView.Elliptical: setting property 'CSS' for element 'plottingPanelAnalytic2'
+      .setProperty("XFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'XFixedTick' for element 'plottingPanelAnalytic2'
+      .setProperty("Title","Effective radial potential energy") // EJsS HtmlView.Elliptical: setting property 'Title' for element 'plottingPanelAnalytic2'
+      .setProperty("YFixedTick",0) // EJsS HtmlView.Elliptical: setting property 'YFixedTick' for element 'plottingPanelAnalytic2'
+      .setProperty("TRMessage","green: gravitational \n magenta: centrifugal \n blue: effective \n dashed: total energy") // EJsS HtmlView.Elliptical: setting property 'TRMessage' for element 'plottingPanelAnalytic2'
+      .setProperty("MinimumX",0) // EJsS HtmlView.Elliptical: setting property 'MinimumX' for element 'plottingPanelAnalytic2'
+      .setProperty("TitleY","Energy") // EJsS HtmlView.Elliptical: setting property 'TitleY' for element 'plottingPanelAnalytic2'
+      .setProperty("AutoScaleY",false) // EJsS HtmlView.Elliptical: setting property 'AutoScaleY' for element 'plottingPanelAnalytic2'
+      .setProperty("TitleX","Radial distance") // EJsS HtmlView.Elliptical: setting property 'TitleX' for element 'plottingPanelAnalytic2'
+      .setProperty("TitleFont","normal bold 12px ") // EJsS HtmlView.Elliptical: setting property 'TitleFont' for element 'plottingPanelAnalytic2'
+      .setProperty("LineWidth",0) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'plottingPanelAnalytic2'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"UeffTrail2", _view.plottingPanelAnalytic2) // EJsS HtmlView.Elliptical: declaration of element 'UeffTrail2'
+      .setProperty("LineColor","Blue") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'UeffTrail2'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'UeffTrail2'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'UeffTrail2'
+      .setProperty("LineWidth",2) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'UeffTrail2'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"UTrail", _view.plottingPanelAnalytic2) // EJsS HtmlView.Elliptical: declaration of element 'UTrail'
+      .setProperty("LineColor","Green") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'UTrail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'UTrail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'UTrail'
+      .setProperty("LineWidth",1) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'UTrail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.trail,"L2Trail", _view.plottingPanelAnalytic2) // EJsS HtmlView.Elliptical: declaration of element 'L2Trail'
+      .setProperty("LineColor","Magenta") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'L2Trail'
+      .setProperty("Visibility",true) // EJsS HtmlView.Elliptical: setting property 'Visibility' for element 'L2Trail'
+      .setProperty("NoRepeat",true) // EJsS HtmlView.Elliptical: setting property 'NoRepeat' for element 'L2Trail'
+      .setProperty("LineWidth",1) // EJsS HtmlView.Elliptical: setting property 'LineWidth' for element 'L2Trail'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.analyticCurve,"analyticCurveETotal", _view.plottingPanelAnalytic2) // EJsS HtmlView.Elliptical: declaration of element 'analyticCurveETotal'
+      .setProperty("Attributes",{ "stroke-dasharray":"4 4 4 4" }) // EJsS HtmlView.Elliptical: setting property 'Attributes' for element 'analyticCurveETotal'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'analyticCurveETotal'
+      ;
+
+    _view._addElement(EJSS_DRAWING2D.analyticCurve,"analyticCurveZero", _view.plottingPanelAnalytic2) // EJsS HtmlView.Elliptical: declaration of element 'analyticCurveZero'
+      .setProperty("LineColor","Black") // EJsS HtmlView.Elliptical: setting property 'LineColor' for element 'analyticCurveZero'
+      .setProperty("Y",0) // EJsS HtmlView.Elliptical: setting property 'Y' for element 'analyticCurveZero'
+      ;
+
+  };
+
+  return _view;
+}
+
+
+//--><!]]></script>
+  </head>
+  <body>
+    <div role="button" id="_topFrame" style="text-align:center"></div>
+  <div id="metadata" class="metadata">
+    <br />
+    <div id="title_author">
+      <hr />
+      <b>Title and author:</b>
+      <p>
+      Two-body Newtonian Gravitation<br />
+     <img alt="Logo" src="screenshot-resized.png" />
+      </p>
+      <p>
+      <img alt="author image" src="ScienceSamuraiDarrenTanSquareSmall.png" />
+ Zhiming Darren TAN
+      </p>
+    </div>
+    <hr />
+    <p></p>
+    <div id="copyright_message">
+      <div class="cc_left"  style="float:left">&#169; 2020, Open Source Physics. Compiled with EJS 6.0 (201009)
+</div>
+      <div class="cc_right" style="float:right">    Released under a <a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/deed.en_US"> <img alt="Creative Commons Attribution-NonCommercial-ShareAlike" src="_ejs_library/images/cc_icon.png" /> </a> license.</div>
+    </div>
+  </div>
+    <script type="text/javascript"><!--//--><![CDATA[//><!--
+      var _model;
+      var _scorm;
+      window.addEventListener('load',
+        function () { 
+          _model =  new TwoBodyNewtonianGravitation("_topFrame","_ejs_library/",null);
+          if (typeof _isApp !== "undefined" && _isApp) _model.setRunAlways(true);
+          TextResizeDetector.TARGET_ELEMENT_ID = '_topFrame';
+          TextResizeDetector.USER_INIT_FUNC = function () {
+            var iBase = TextResizeDetector.addEventListener(function(e,args) {
+              _model._fontResized(args[0].iBase,args[0].iSize,args[0].iDelta);
+              },null);
+            _model._fontResized(iBase);
+          };
+          _model.onload();
+        }, false);
+    //--><!]]></script>
+  </body>
+</html>

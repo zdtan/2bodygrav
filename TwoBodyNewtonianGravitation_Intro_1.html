@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <title> Introduction</title>
+    <link rel="stylesheet" type="text/css" href="_ejs_library/css/ejss.css"></link>
+  </head>
+  <body > 
+
+    <h1>
+      Two-body Newtonian Gravitation
+    </h1>
+    <p style="margin-top: 0">
+      Simulation of Newtonian gravitation for a two-body system. The 
+      simulation panel is a visualisation of the motion of the two bodies, the 
+      larger one (red) of variable mass <i>M</i> and the smaller one (blue) of 
+      fixed mass <i>m</i>. There are three (plus one) graphs:
+    </p>
+    <ol>
+      <li>
+        Radial and tangential velocities of the smaller mass <i>m</i> as 
+        functions of time. Cartesian components can also be shown.
+      </li>
+      <li>
+        Potential, kinetic, and total energy as functions of time for the 
+        system.
+      </li>
+      <li>
+        Visualisation of the analytic expressions of energy as a function of 
+        radial separation (the effective one-body system). This consists of 
+        two graphs: (i) a dynamic visualisation that tracks the system 
+        evolution and motion, as well as (ii) a static visualisation in a 
+        separate graph showing the analytic expression as a sum of 
+        gravitational and &quot;centrifugal (associated with angular momentum)&quot; 
+        terms. The graphs are separated because of the different vertical 
+        scales needed for each visualisation.
+      </li>
+    </ol>
+    <h2>
+      Instructions
+    </h2>
+    <ul>
+      <li>
+        The slider allows you to vary the ratio of masses <i>M</i>/<i>m</i>.
+      </li>
+      <li>
+        You can also vary the initial velocity of the smaller mass <i>m</i> in 
+        various ways: (i) click and drag the head of the velocity arrow; (ii) 
+        input values individually for the components (<i>vx</i>, <i>vy</i>); 
+        (iii) click the checkbox to autocalculate initial velocity for a 
+        circular orbit.
+      </li>
+      <li>
+        Click play/pause/reset. You can readjust parameters while the 
+        simulation is paused. The graphs will be refreshed.
+      </li>
+    </ul>
+    <h2>
+      Interpreting the Graphs
+    </h2>
+    <p style="margin-top: 0">
+      In the velocity-time graph, the blue/black lines are the 
+      radial/tangential velocities of the smaller (blue) mass <i>m</i>. These 
+      are calculated as the simulation is running. Cartesian components of the 
+      velocity can also be shown as dashed lines.
+    </p>
+    <p style="margin-top: 0">
+      
+    </p>
+    <p style="margin-top: 0">
+      In the energy-time graph, the red line is the kinetic energy of the 
+      larger (red) mass <i>M</i>, while the blue line is the kinetic energy of 
+      the smaller (blue) mass <i>m</i>. The black line is the gravitational 
+      potential energy of their interaction, while the dashed line is the 
+      total energy (if shown). These are calculated as the simulation is 
+      running.
+    </p>
+    <p style="margin-top: 0">
+      
+    </p>
+    <p style="margin-top: 0">
+      In the energy-position graphs, the analytic form for the effective 
+      radial potential energy is shown, as a function of the radial separation 
+      between the two masses, which is based on analysing the relative motion 
+      as a one-body problem. Exact expressions are used for the angular 
+      momentum of the system, which provides a &quot;centrifugal&quot; term to the 
+      effective radial potential energy. The total energy is shown as a dashed 
+      line. In the dynamic visualisation, the radial potential energy is 
+      calculated and traced when the simulation is running. In the static 
+      visualisation, the vertical scale is larger to show how <i>U</i>_{eff} = 
+      GPE + <i>L</i>^2 term. The orbital eccentricity is also displayed as a 
+      text overlay.
+    </p>
+    <h2>
+      Notes
+    </h2>
+    <p style="margin-top: 0">
+      The simulation automatically sets the initial conditions (position, 
+      velocity) for the larger (red) mass such that the centre of mass (white) 
+      is stationary at the centre of the simulation panel.
+    </p>
+  
+  </body>
+</html>
