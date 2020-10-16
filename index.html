@@ -469,8 +469,8 @@ var _stringProperties = {};
   _model.addToReset(function() {
     _model.setAutoplay(false);
     _model.setPauseOnPageExit(true);
-    _model.setFPS(24);
-    _model.setStepsPerDisplay(1);
+    _model.setFPS(20);
+    _model.setStepsPerDisplay(10);
   });
 
   // to provide functions, used in initialisation, evolution, fixed relations  // > CustomCode.Lib Page:1
@@ -1071,7 +1071,7 @@ var _stringProperties = {};
           _view.vyfield.setAction("OnChange", _initialize); // Elliptical setting action 'OnChange' for element 'vyfield'
           _view.topPanel.linkProperty("Height",  function() { return topHeight; }, function(_v) { topHeight = _v; } ); // Elliptical linking property 'Height' for element 'topPanel'
           _view.drawingPanel.linkProperty("Height",  function() { return topHeight; }, function(_v) { topHeight = _v; } ); // Elliptical linking property 'Height' for element 'drawingPanel'
-          _view.drawingPanel.linkProperty("TLMessage",  function() { return "time="+_view._format(t,"0.00"); } ); // Elliptical linking property 'TLMessage' for element 'drawingPanel'
+          _view.drawingPanel.linkProperty("TLMessage",  function() { return "time="+_view._format(t,"0.0"); } ); // Elliptical linking property 'TLMessage' for element 'drawingPanel'
           _view.shapem.linkProperty("SizeX",  function() { return Math.pow(m,1/3)*scalem; } ); // Elliptical linking property 'SizeX' for element 'shapem'
           _view.shapem.linkProperty("X",  function() { return x; }, function(_v) { x = _v; } ); // Elliptical linking property 'X' for element 'shapem'
           _view.shapem.linkProperty("Y",  function() { return y; }, function(_v) { y = _v; } ); // Elliptical linking property 'Y' for element 'shapem'
@@ -1109,6 +1109,7 @@ var _stringProperties = {};
           _view.traceM.linkProperty("InputX",  function() { return X; }, function(_v) { X = _v; } ); // Elliptical linking property 'InputX' for element 'traceM'
           _view.traceM.linkProperty("InputY",  function() { return Y; }, function(_v) { Y = _v; } ); // Elliptical linking property 'InputY' for element 'traceM'
           _view.trace0.linkProperty("InputX",  function() { return x0; }, function(_v) { x0 = _v; } ); // Elliptical linking property 'InputX' for element 'trace0'
+          _view.trace0.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'trace0'
           _view.trace0.linkProperty("InputY",  function() { return y0; }, function(_v) { y0 = _v; } ); // Elliptical linking property 'InputY' for element 'trace0'
           _view.arrowX.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'arrowX'
           _view.textX.linkProperty("Visibility",  function() { return _isPaused; } ); // Elliptical linking property 'Visibility' for element 'textX'
@@ -1173,8 +1174,8 @@ var _stringProperties = {};
   } // end of _selectView
 
   _model.setAutoplay(false);
-  _model.setFPS(24);
-  _model.setStepsPerDisplay(1);
+  _model.setFPS(20);
+  _model.setStepsPerDisplay(10);
   _selectView(_model._autoSelectView(_getViews())); // this includes _model.reset()
   return _model;
 }
